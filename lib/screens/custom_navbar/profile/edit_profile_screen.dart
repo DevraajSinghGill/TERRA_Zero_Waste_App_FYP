@@ -36,7 +36,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Profile"),
+        title: Text(
+          "Edit Profile",
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white), // Set font color to white
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -44,17 +47,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10.h),
+              SizedBox(height: 20.h), 
               ProfileImagePortion(userModel: widget.userModel),
               SizedBox(height: 30),
-              Text("UserName", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16, color: AppColors.primaryGrey)),
+              Text("UserName", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16, color: AppColors.primaryBlack)),
               SizedBox(height: 5),
               CustomTextInput(
                 controller: AppTextController.usernameController,
                 hintText: widget.userModel.username,
               ),
               SizedBox(height: 20),
-              Text("About", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16, color: AppColors.primaryGrey)),
+              Text("About", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16, color: AppColors.primaryBlack)),
               SizedBox(height: 5),
               CustomTextInput(
                 controller: AppTextController.aboutController,

@@ -18,15 +18,15 @@ class HomePageActivities extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.green, // Changed to green
               title: Text(
                 'Home TERRA Activities',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
+                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white), // Text color set to white
               ),
               centerTitle: true,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back, color: Colors.white), // Icon color set to white
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -37,15 +37,15 @@ class HomePageActivities extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.green, // Changed to green
               title: Text(
                 'Home TERRA Activities',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
+                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white), // Text color set to white
               ),
               centerTitle: true,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back, color: Colors.white), // Icon color set to white
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -59,15 +59,15 @@ class HomePageActivities extends StatelessWidget {
           String formattedName = _formatName(userData['username'] ?? '');
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.green[900], // Changed to green
               title: Text(
                 'TERRA Activities',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
+                    fontWeight: FontWeight.w700, fontSize: 18, color: Colors.white), // Text color set to white
               ),
               centerTitle: true,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back, color: Colors.white), // Icon color set to white
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -78,15 +78,15 @@ class HomePageActivities extends StatelessWidget {
         } else {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.green, // Changed to green
               title: Text(
                 'TERRA Activities',
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
+                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white), // Text color set to white
               ),
               centerTitle: true,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back, color: Colors.white), // Icon color set to white
                 onPressed: () {
                   Navigator.pop(context);
                 },

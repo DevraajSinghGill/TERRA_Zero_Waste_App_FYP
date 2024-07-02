@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/home/widgets/comment_card.dart';
 
 import '../../../constants/app_colors.dart';
@@ -11,7 +12,6 @@ import '../../../controllers/loading_controller.dart';
 import '../../../controllers/text_controllers.dart';
 import '../../../models/comment_model.dart';
 import '../../../models/post_model.dart';
-import '../../../widgets/text_inputs.dart';
 
 class CommentScreen extends StatelessWidget {
   final PostModel postModel;
@@ -22,7 +22,11 @@ class CommentScreen extends StatelessWidget {
     final commentController = Provider.of<CommentController>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("All Comments"),
+        title: Text(
+          "All Comments",
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white), // Using AppTextStyles
+        ),
+        backgroundColor: Colors.green[900], // Changed to green[800]
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -40,10 +44,7 @@ class CommentScreen extends StatelessWidget {
             return Center(
               child: Text(
                 "No Comment Found!",
-                style: AppTextStyles.nunitoBold.copyWith(
-                  fontSize: 16,
-                  color: AppColors.primaryColor,
-                ),
+                style: AppTextStyles.nunitoBold.copyWith(color: AppColors.primaryColor), // Using AppTextStyles
               ),
             );
           }
@@ -64,9 +65,17 @@ class CommentScreen extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: CustomTextInput(
+              child: TextField(
                 controller: AppTextController.commentController,
-                hintText: "Write Something",
+                decoration: InputDecoration(
+                  hintText: "Write Something",
+                  hintStyle: AppTextStyles.nunitoMedium, // Apply the hint style
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
               ),
             ),
             SizedBox(width: 10.w),

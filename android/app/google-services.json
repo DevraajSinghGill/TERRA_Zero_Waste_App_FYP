@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "67848000414",
+    "project_id": "terra-zero-waste-app-a10c9",
+    "storage_bucket": "terra-zero-waste-app-a10c9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67848000414:android:9055565b02c044fa7a3c8f",
+        "android_client_info": {
+          "package_name": "com.iktechsol.terra_zero_waste_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3dCI_9TP1UJEbur1VPGfR8sqHg2kjuZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

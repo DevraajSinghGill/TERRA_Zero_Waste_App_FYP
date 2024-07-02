@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">67848000414</string>
+    <string name="google_api_key" translatable="false">AIzaSyA3dCI_9TP1UJEbur1VPGfR8sqHg2kjuZY</string>
+    <string name="google_app_id" translatable="false">1:67848000414:android:9055565b02c044fa7a3c8f</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA3dCI_9TP1UJEbur1VPGfR8sqHg2kjuZY</string>
+    <string name="google_storage_bucket" translatable="false">terra-zero-waste-app-a10c9.appspot.com</string>
+    <string name="project_id" translatable="false">terra-zero-waste-app-a10c9</string>
+</resources>

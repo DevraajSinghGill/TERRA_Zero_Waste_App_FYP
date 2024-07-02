@@ -1,0 +1,17 @@
+com.iktechsol.terra_zero_waste_app-jetified-annotation-experimental-1.1.0-0 C:\Users\o\.gradle\caches\transforms-3\257e0bb88528f5fc66bfd853728809aa\transformed\jetified-annotation-experimental-1.1.0\res
+com.iktechsol.terra_zero_waste_app-jetified-play-services-basement-18.3.0-1 C:\Users\o\.gradle\caches\transforms-3\4105637ca2d0ffd34d30b1a01003cfea\transformed\jetified-play-services-basement-18.3.0\res
+com.iktechsol.terra_zero_waste_app-jetified-window-1.0.0-beta04-2 C:\Users\o\.gradle\caches\transforms-3\6582e67aea0be70979c64a0bfb01e347\transformed\jetified-window-1.0.0-beta04\res
+com.iktechsol.terra_zero_waste_app-core-1.6.0-3 C:\Users\o\.gradle\caches\transforms-3\974b4f2252348b5ef43741b27d416a49\transformed\core-1.6.0\res
+com.iktechsol.terra_zero_waste_app-jetified-firebase-common-21.0.0-4 C:\Users\o\.gradle\caches\transforms-3\99b9a7207b542f01bb3d0c15b55d2be4\transformed\jetified-firebase-common-21.0.0\res
+com.iktechsol.terra_zero_waste_app-jetified-window-java-1.0.0-beta04-5 C:\Users\o\.gradle\caches\transforms-3\9b0dd0bee9a81680af20f56797c52ab1\transformed\jetified-window-java-1.0.0-beta04\res
+com.iktechsol.terra_zero_waste_app-packaged_res-6 C:\Users\o\AppData\Local\Pub\Cache\hosted\pub.dev\firebase_core-3.1.0\android\build\intermediates\packaged_res\debug
+com.iktechsol.terra_zero_waste_app-packaged_res-7 C:\Users\o\AppData\Local\Pub\Cache\hosted\pub.dev\path_provider_android-2.2.4\android\build\intermediates\packaged_res\debug
+com.iktechsol.terra_zero_waste_app-google-services-8 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\build\generated\res\google-services\debug
+com.iktechsol.terra_zero_waste_app-pngs-9 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\build\generated\res\pngs\debug
+com.iktechsol.terra_zero_waste_app-resValues-10 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\build\generated\res\resValues\debug
+com.iktechsol.terra_zero_waste_app-rs-11 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\build\generated\res\rs\debug
+com.iktechsol.terra_zero_waste_app-mergeDebugResources-12 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.iktechsol.terra_zero_waste_app-mergeDebugResources-13 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.iktechsol.terra_zero_waste_app-merged_res-14 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\build\intermediates\merged_res\debug
+com.iktechsol.terra_zero_waste_app-debug-15 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\src\debug\res
+com.iktechsol.terra_zero_waste_app-main-16 C:\Users\o\StudioProjects\terra_zero_waste_app\android\app\src\main\res

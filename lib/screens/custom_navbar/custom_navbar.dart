@@ -108,7 +108,7 @@ class _CustomNavBarState extends State<CustomNavBar>
                 tabBorder: Border.all(color: Colors.transparent, width: 1),
                 tabShadow: [],
                 curve: Curves.easeOutExpo,
-                duration: Duration(milliseconds: 900),
+                duration: Duration(milliseconds: 360),
                 gap: 0,
                 color: Colors.grey[800],
                 activeColor: const Color.fromARGB(255, 9, 66, 11),

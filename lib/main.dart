@@ -48,13 +48,13 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               appBarTheme: AppBarTheme(
                 centerTitle: true,
-                backgroundColor: Colors.green[900], // Set the background color
+                backgroundColor: Colors.green[900], 
                 titleTextStyle: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // Set the text color
+                  color: Colors.white, 
                 ),
-                iconTheme: IconThemeData(color: Colors.white), // Set the icon color
+                iconTheme: IconThemeData(color: Colors.white), 
               ),
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,

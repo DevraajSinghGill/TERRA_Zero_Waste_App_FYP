@@ -28,7 +28,10 @@ class _OtherUserDetailScreenState extends State<OtherUserDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Detail"),
+        title: Text(
+          "Detail",
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
+        ),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('users').doc(widget.userId).snapshots(),
@@ -48,6 +51,7 @@ class _OtherUserDetailScreenState extends State<OtherUserDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        SizedBox(height: 20),  // Add space here
                         Row(
                           children: [
                             userModel.image == ""
@@ -68,36 +72,40 @@ class _OtherUserDetailScreenState extends State<OtherUserDetailScreen> {
                               children: [
                                 Text(
                                   userModel.username,
-                                  style: AppTextStyles.mainTextStyle.copyWith(
+                                  style: AppTextStyles.nunitoSemiBod.copyWith(
                                     fontSize: 18,
                                   ),
                                 ),
                                 Text(
                                   "Member Since : ${DateFormat('dd-MM-yyyy').format(userModel.memberSince)}",
-                                  style: AppTextStyles.nunitoBold.copyWith(fontSize: 14, color: AppColors.primaryGrey),
+                                  style: AppTextStyles.nunitoBold.copyWith(fontSize: 10, color: AppColors.primaryGrey),
                                 ),
                               ],
                             )
                           ],
                         ),
                         SizedBox(height: 15),
-                        Text(userModel.about),
+                        Text(
+                          userModel.about,
+                          style: AppTextStyles.nunitoRegular.copyWith(fontSize: 16)  // Apply custom font style
+                        ),
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,  // Center the buttons
                             children: [
                               SecondaryButton(
                                 title: "Chat",
+                                textStyle: AppTextStyles.nunitoBold.copyWith(color: Colors.white), // Custom font style
                                 onPressed: () {
                                   Get.to(() => ChatMainScreen(userId: userModel.userId));
                                 },
                               ),
                               SizedBox(width: 20),
                               SecondaryButton(
-                                title:
-                                    userModel.followers.contains(FirebaseAuth.instance.currentUser!.uid) ? "Following" : "Follow",
+                                title: userModel.followers.contains(FirebaseAuth.instance.currentUser!.uid) ? "Following" : "Follow",
                                 btnColor: AppColors.primaryColor,
+                                textStyle: AppTextStyles.nunitoBold.copyWith(color: Colors.white), // Custom font style
                                 onPressed: () {
                                   UserProfileServices.FollowAndUnFollowUser(context, widget.userId);
                                 },
@@ -112,10 +120,7 @@ class _OtherUserDetailScreenState extends State<OtherUserDetailScreen> {
                         SizedBox(
                           height: Get.height * 0.5,
                           child: StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('posts')
-                                .where('userId', isEqualTo: userModel.userId)
-                                .snapshots(),
+                            stream: FirebaseFirestore.instance.collection('posts').where('userId', isEqualTo: userModel.userId).snapshots(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData) {
                                 return Center(

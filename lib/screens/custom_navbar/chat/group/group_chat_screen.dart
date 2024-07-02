@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/widgets/group_chat_portion.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/widgets/image_sending_portion_in_group.dart';
 import 'package:terra_zero_waste_app/services/group_chat_services.dart';
 import 'package:terra_zero_waste_app/widgets/text_inputs.dart';
-
-import '../../../../controllers/image_controller.dart';
+import 'package:terra_zero_waste_app/controllers/image_controller.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GroupChatScreen extends StatefulWidget {
   final String groupId;
@@ -25,7 +27,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Group Chat"),
+        title: Text(
+          "Group Chat",
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
+        ),
       ),
       bottomNavigationBar: imageController.selectedImage != null
           ? SizedBox()

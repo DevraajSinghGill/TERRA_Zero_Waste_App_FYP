@@ -82,34 +82,27 @@ class PrimaryButton extends StatelessWidget {
 
 class SecondaryButton extends StatelessWidget {
   final String title;
-  final Function()? onPressed;
-  final Color? btnColor, textColor;
-  const SecondaryButton({super.key, required this.title, this.btnColor, this.textColor, this.onPressed});
+  final VoidCallback onPressed;
+  final Color btnColor;
+  final TextStyle textStyle;
+
+  const SecondaryButton({
+    required this.title,
+    required this.onPressed,
+    this.btnColor = const Color.fromARGB(255, 0, 0, 0),
+    required this.textStyle,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed ?? () {},
-      child: Container(
-        height: 40,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: btnColor ?? AppColors.primaryBlack,
-        ),
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Text(
-              title,
-              style: TextStyle(
-                color: textColor ?? AppColors.primaryWhite,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(backgroundColor: btnColor),
+      onPressed: onPressed,
+      child: Text(
+        title,
+        style: textStyle,
       ),
     );
   }
 }
+

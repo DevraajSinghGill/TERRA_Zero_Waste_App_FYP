@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/controllers/image_controller.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/widgets/chat_portion.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/widgets/image_sending_portion.dart';
 import 'package:terra_zero_waste_app/services/chat_services.dart';
 import 'package:terra_zero_waste_app/widgets/text_inputs.dart';
+
 
 class ChatMainScreen extends StatefulWidget {
   final String userId;
@@ -35,7 +37,10 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
     final imageController = Provider.of<ImageController>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat"),
+        title: Text(
+          "Chat",
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
+        ),
       ),
       bottomNavigationBar: imageController.selectedImage != null
           ? SizedBox()

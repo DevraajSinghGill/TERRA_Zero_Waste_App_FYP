@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 
 class CustomBottomTabWidget extends StatelessWidget {
   final String image, title;
@@ -23,11 +25,7 @@ class CustomBottomTabWidget extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: selectedColor,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.nunitoSemiBod.copyWith(color: selectedColor, fontSize: 12.sp),
           ),
         ],
       ),

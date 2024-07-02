@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/models/group_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -25,17 +26,23 @@ class GroupChatCard extends StatelessWidget {
                   radius: 30.r,
                   backgroundImage: NetworkImage(group.groupImage),
                 ),
-          title: Text(group.groupName, style: TextStyle(fontSize: 18)),
+          title: Text(
+            group.groupName,
+            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 16.sp),
+          ),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => GroupChatScreen(groupId: group.groupId)),
             );
           },
-          subtitle: Text(group.lastMsg),
+          subtitle: Text(
+            group.lastMsg,
+            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14.sp, color: AppColors.primaryGrey),
+          ),
           trailing: Text(
             timeago.format(group.lastMsgTime),
-            style: TextStyle(fontSize: 12.sp, color: AppColors.primaryGrey),
+            style: AppTextStyles.nunitoMedium.copyWith(fontSize: 12.sp, color: AppColors.primaryGrey),
           ),
         ),
         Divider(height: 10),

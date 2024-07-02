@@ -29,7 +29,7 @@ class UserChatCard extends StatelessWidget {
                   radius: 30.r,
                   child: Text(
                     userModel.username[0].toUpperCase(),
-                    style: AppTextStyles.nunitoBold.copyWith(
+                    style: AppTextStyles.nunitoSemiBod.copyWith(
                       color: AppColors.primaryColor,
                       fontSize: 22.sp,
                     ),
@@ -45,7 +45,7 @@ class UserChatCard extends StatelessWidget {
           ),
           subtitle: Text(
             data['msg'],
-            style: AppTextStyles.nunitoMedium.copyWith(
+            style: AppTextStyles.nunitoRegular.copyWith(
               color: AppColors.primaryGrey,
             ),
           ),

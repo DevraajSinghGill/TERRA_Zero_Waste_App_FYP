@@ -67,7 +67,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
             SizedBox(height: 10.h),
             CustomTextInput(
               controller: AppTextController.postCaptionController,
-              hintText: "Caption Needed",
+              hintText: "Enter your caption...",
               maxLines: 3,
             ),
             SizedBox(height: 50.h),

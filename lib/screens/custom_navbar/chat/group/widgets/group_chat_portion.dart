@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/models/group_chat_model.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/post_detail_screen.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/search/other_user_detail_screen.dart';
@@ -31,7 +32,7 @@ class GroupChatPortion extends StatelessWidget {
             );
           } else if (snapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text("No Msg Found"),
+              child: Text("No Msg Found", style: AppTextStyles.mainTextStyle),
             );
           }
           return ListView.builder(
@@ -41,7 +42,7 @@ class GroupChatPortion extends StatelessWidget {
               GroupChatModel groupChatModel = GroupChatModel.fromDoc(snapshot.data!.docs[index]);
 
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 08, horizontal: 10),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -56,10 +57,7 @@ class GroupChatPortion extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   groupChatModel.username[0].toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 22.sp,
-                                    color: AppColors.primaryColor,
-                                  ),
+                                  style: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp, color: AppColors.primaryColor),
                                 ),
                               ),
                             )
@@ -73,8 +71,10 @@ class GroupChatPortion extends StatelessWidget {
                       child: Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-                        decoration:
-                            BoxDecoration(borderRadius: BorderRadius.circular(8), color: Color.fromARGB(255, 32, 79, 102).withOpacity(0.2)),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color.fromARGB(255, 32, 79, 102).withOpacity(0.2),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -84,11 +84,11 @@ class GroupChatPortion extends StatelessWidget {
                               children: [
                                 Text(
                                   groupChatModel.username,
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                                  style: AppTextStyles.nunitoSemiBod,
                                 ),
                                 Text(
                                   timeago.format(groupChatModel.sendingTime),
-                                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w400, color: Colors.grey.shade900),
+                                  style: AppTextStyles.rubikMedium.copyWith(color: Colors.grey.shade900),
                                 ),
                               ],
                             ),
@@ -126,9 +126,7 @@ class GroupChatPortion extends StatelessWidget {
                                         children: [
                                           Text(
                                             postModel.caption,
-                                            style: TextStyle(
-                                              fontSize: 12.sp,
-                                            ),
+                                            style: AppTextStyles.rubikMedium.copyWith(fontSize: 12.sp),
                                           ),
                                           SizedBox(height: 5),
                                           SizedBox(
@@ -141,7 +139,7 @@ class GroupChatPortion extends StatelessWidget {
                                     );
                                   })
                             else
-                              Text(groupChatModel.msg)
+                              Text(groupChatModel.msg, style: AppTextStyles.nunitoRegular),
                           ],
                         ),
                       ),

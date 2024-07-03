@@ -6,7 +6,15 @@ import '../../../constants/app_text_styles.dart';
 class AuthFooterWidget extends StatelessWidget {
   final String? title, screenName;
   final Function()? onPressed;
-  const AuthFooterWidget({super.key, this.title, this.screenName, this.onPressed});
+  final TextStyle? titleStyle;
+
+  const AuthFooterWidget({
+    super.key,
+    this.title,
+    this.screenName,
+    this.onPressed,
+    this.titleStyle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +31,9 @@ class AuthFooterWidget extends StatelessWidget {
           ),
           Text(
             "$screenName",
-            style: AppTextStyles.quicksandSemiBold.copyWith(
+            style: titleStyle ?? AppTextStyles.quicksandSemiBold.copyWith(
               fontSize: 16.sp,
+              color: Colors.blue, // Make sure the color is set to blue
             ),
           ),
         ],

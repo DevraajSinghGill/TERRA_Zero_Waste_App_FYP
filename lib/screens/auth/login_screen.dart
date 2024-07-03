@@ -10,7 +10,6 @@ import 'package:terra_zero_waste_app/screens/auth/signup_screen.dart';
 import 'package:terra_zero_waste_app/screens/auth/widgets/auth_footer_widget.dart';
 import 'package:terra_zero_waste_app/services/auth_services.dart';
 import 'package:terra_zero_waste_app/widgets/buttons.dart';
-import 'package:terra_zero_waste_app/widgets/logo_widget.dart';
 import 'package:terra_zero_waste_app/widgets/text_inputs.dart';
 
 import '../../constants/app_colors.dart';
@@ -35,9 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20.h),
-              SafeArea(
-                child: Center(child: LogoWidget()),
-              ),
               SizedBox(height: 20.h),
               Text("Welcome Back!", style: AppTextStyles.mainTextStyle),
               SizedBox(height: 10.h),
@@ -66,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: () {
                     Get.to(() => ForgotPasswordScreen());
                   },
-                  child: Text("Forgot Password?", style: AppTextStyles.mainTextStyle.copyWith(fontSize: 14, letterSpacing: 1.2)),
+                  child: Text("Forgot Password?", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14, letterSpacing: 1.2, color: Colors.red[800])),
                 ),
               ),
               SizedBox(height: 30.h),
@@ -94,6 +90,10 @@ class _LoginScreenState extends State<LoginScreen> {
               AuthFooterWidget(
                 title: "Don't have an account",
                 screenName: "Sign Up",
+                titleStyle: AppTextStyles.nunitoBold.copyWith(
+                  fontSize: 16.sp,
+                  color: Colors.blue,
+                ),
                 onPressed: () {
                   Get.to(() => SignUpScreen());
                 },

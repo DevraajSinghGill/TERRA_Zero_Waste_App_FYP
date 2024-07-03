@@ -121,6 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
                 title: "Already have an account",
                 screenName: "Login",
+                titleStyle: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp, color: Colors.blue[400]),
               ),
               SizedBox(height: 15.h),
             ],

@@ -18,7 +18,10 @@ class PostDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Post Detail"),
+        title: Text(
+          "Post Detail",
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -63,7 +66,7 @@ class PostDetailScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     userModel.username,
-                                    style: AppTextStyles.mainTextStyle.copyWith(
+                                    style: AppTextStyles.nunitoRegular.copyWith(
                                       fontSize: 18,
                                     ),
                                   ),

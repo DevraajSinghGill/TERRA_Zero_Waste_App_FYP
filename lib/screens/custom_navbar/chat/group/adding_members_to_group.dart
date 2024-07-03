@@ -21,7 +21,10 @@ class _AddingMembersToGroupState extends State<AddingMembersToGroup> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Members"),
+        title: Text(
+          "Add Members",
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
+        ),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -35,7 +38,10 @@ class _AddingMembersToGroupState extends State<AddingMembersToGroup> {
             );
           } else if (snapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text("No User Found"),
+              child: Text(
+                "No User Found",
+                style: AppTextStyles.nunitoBold.copyWith(fontSize: 15),
+              ),
             );
           }
           return ListView.builder(
@@ -60,8 +66,8 @@ class _AddingMembersToGroupState extends State<AddingMembersToGroup> {
                                 radius: 30.r,
                                 backgroundImage: NetworkImage(userModel.image),
                               ),
-                        title: Text(userModel.username, style: AppTextStyles.nunitoBold.copyWith(fontSize: 15)),
-                        subtitle: Text(userModel.email),
+                        title: Text(userModel.username, style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
+                        subtitle: Text(userModel.email, style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12)),
                         trailing: ElevatedButton(
                           onPressed: () {
                             if (_userIds.contains(userModel.userId)) {

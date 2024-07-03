@@ -123,27 +123,27 @@ class _CustomNavBarState extends State<CustomNavBar>
                   GButton(
                     icon: Icons.home,
                     text: 'Home',
-                    textStyle: TextStyle(fontSize: 12.sp), // Set font size here
+                    textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 10.sp),
                   ),
                   GButton(
                     icon: Icons.search,
                     text: 'Search',
-                    textStyle: TextStyle(fontSize: 10.sp), // Set font size here
+                    textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 10.sp), 
                   ),
                   GButton(
                     icon: Icons.add,
                     text: 'Post',
-                    textStyle: TextStyle(fontSize: 10.sp), // Set font size here
+                    textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 10.sp),
                   ),
                   GButton(
                     icon: Icons.chat,
                     text: 'Chat',
-                    textStyle: TextStyle(fontSize: 10.sp), // Set font size here
+                    textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 10.sp), 
                   ),
                   GButton(
                     icon: Icons.person,
                     text: 'Profile',
-                    textStyle: TextStyle(fontSize: 10.sp), // Set font size here
+                    textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 10.sp), 
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../constants/app_colors.dart';
+import '../../../constants/app_text_styles.dart';
 
 class ImageFullView extends StatelessWidget {
   final String image;
@@ -13,7 +14,7 @@ class ImageFullView extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Full View",
-          style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500, color: AppColors.primaryWhite),
+          style: AppTextStyles.nunitoBold.copyWith(color: AppColors.primaryWhite),
         ),
         backgroundColor: AppColors.primaryColor,
         centerTitle: true,

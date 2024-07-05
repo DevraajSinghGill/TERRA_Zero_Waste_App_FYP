@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 
 class TotalPointsPage extends StatefulWidget {
   final int totalPoints;
@@ -72,7 +73,7 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,8 +81,10 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
             _buildPointsSection(),
             SizedBox(height: 20),
             _buildCompletedTasksSection(),
+            SizedBox(height: 20), // Added space before the description
+            _buildDescriptionBox(),
             SizedBox(height: 20),
-            Expanded(child: _buildCompletedTasksBox()),  // Make the list scrollable within the remaining space
+            _buildScrollableCompletedTasksBox(), // Changed to a scrollable container
           ],
         ),
       ),
@@ -92,7 +95,11 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          colors: [Colors.green[500]!, Colors.green[900]!],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -107,14 +114,14 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
         children: [
           Row(
             children: [
-              Icon(Icons.stars, color: Colors.green[900], size: 28),
+              Icon(Icons.stars, color: Colors.white, size: 28),
               SizedBox(width: 10),
               Text(
                 'Total Points',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w700,
                   fontSize: 18,
-                  color: Colors.green[900],
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -125,7 +132,7 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.w900,
               fontSize: 28,  // Adjusted font size
-              color: Colors.green[900],
+              color: Colors.white,
             ),
           ),
         ],
@@ -137,7 +144,11 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          colors: [Colors.green[500]!, Colors.green[900]!],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -152,14 +163,14 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
         children: [
           Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.green[900], size: 28),
+              Icon(Icons.check_circle, color: Colors.white, size: 28),
               SizedBox(width: 10),
               Text(
                 'Total Completed Tasks',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w700,
                   fontSize: 18,
-                  color: Colors.green[900],
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -170,7 +181,7 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.w900,
               fontSize: 28,  // Adjusted font size
-              color: Colors.green[900],
+              color: Colors.white,
             ),
           ),
         ],
@@ -178,85 +189,117 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
     );
   }
 
-  Widget _buildCompletedTasksBox() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.userId)
-          .collection('completedTasks')
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-        var completedTasks = snapshot.data!.docs.map((doc) {
-          return {
-            'task': doc['task'],
-            'points': _parsePoints(doc['points']),
-            'icon': _parseIcon(doc['icon']),
-          };
-        }).toList();
+  Widget _buildDescriptionBox() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('lib/assets/images/gardening.jpg'), // Use the specified image asset
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.dstATop),
+        ),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+              color: Color.fromARGB(255, 0, 0, 0).withOpacity(1),
+              spreadRadius: 2,
+              blurRadius: 7,
+              offset: Offset(0, 3))
+        ],
+      ),
+      child: Text(
+        'Here is the list of all the tasks you have completed and the points you have earned for each:',
+        style: GoogleFonts.poppins(
+          fontSize: 16,
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
 
-        if (completedTasks.isEmpty) {
-          return Center(
-            child: Text(
-              'No tasks completed yet.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          );
-        }
+  Widget _buildScrollableCompletedTasksBox() {
+    return Container(
+      height: 400,  // Fixed height for the scrollable container
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.userId)
+            .collection('completedTasks')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          var completedTasks = snapshot.data!.docs.map((doc) {
+            return {
+              'task': doc['task'],
+              'points': _parsePoints(doc['points']),
+              'icon': _parseIcon(doc['icon']),
+            };
+          }).toList();
 
-        return ListView.builder(
-          itemCount: completedTasks.length,
-          itemBuilder: (context, index) {
-            return Card(
-              elevation: 4,
-              margin: EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 229, 245, 224),
-                      Color.fromARGB(255, 204, 235, 197),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.green[100],
-                    child: Icon(
-                      IconData(completedTasks[index]['icon'], fontFamily: 'MaterialIcons'),
-                      color: Colors.green[800],
-                      size: 24,
-                    ),
-                  ),
-                  title: Text(
-                    completedTasks[index]['task'],
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  subtitle: Text(
-                    '${completedTasks[index]['points']} points',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ),
+          if (completedTasks.isEmpty) {
+            return Center(
+              child: Text(
+                'No tasks completed yet.',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             );
-          },
-        );
-      },
+          }
+
+          return ListView.builder(
+            itemCount: completedTasks.length,
+            itemBuilder: (context, index) {
+              return Card(
+                elevation: 4,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 229, 245, 224),
+                        Color.fromARGB(255, 204, 235, 197),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.green[100],
+                      child: Icon(
+                        IconData(completedTasks[index]['icon'], fontFamily: 'MaterialIcons'),
+                        color: Colors.green[800],
+                        size: 24,
+                      ),
+                    ),
+                    title: Text(
+                      completedTasks[index]['task'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    subtitle: Text(
+                      '${completedTasks[index]['points']} points',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 

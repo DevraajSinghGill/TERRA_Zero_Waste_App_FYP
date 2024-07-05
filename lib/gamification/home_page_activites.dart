@@ -12,8 +12,15 @@ class HomePageActivities extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DocumentSnapshot>(
-      future: _getUserData(),
+    User? user = _auth.currentUser;
+    if (user == null) {
+      return Scaffold(
+        body: Center(child: Text("No user logged in")),
+      );
+    }
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _firestore.collection('users').doc(user.uid).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildScaffoldWithAppBar(
@@ -45,14 +52,6 @@ class HomePageActivities extends StatelessWidget {
         }
       },
     );
-  }
-
-  Future<DocumentSnapshot> _getUserData() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      return await _firestore.collection('users').doc(user.uid).get();
-    }
-    throw Exception('No user logged in');
   }
 
   Scaffold _buildScaffoldWithAppBar(BuildContext context, String title,
@@ -115,7 +114,6 @@ class HomePageActivities extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => TotalPointsPage(
                         totalPoints: totalPoints,
-                        completedTasks: [],
                         userId: _auth.currentUser!.uid,
                         pointsPerTask: pointsPerTask))),
             Colors.green[800]!,

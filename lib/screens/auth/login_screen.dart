@@ -11,7 +11,6 @@ import 'package:terra_zero_waste_app/screens/auth/widgets/auth_footer_widget.dar
 import 'package:terra_zero_waste_app/services/auth_services.dart';
 import 'package:terra_zero_waste_app/widgets/buttons.dart';
 import 'package:terra_zero_waste_app/widgets/text_inputs.dart';
-
 import '../../constants/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -27,81 +26,163 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.w),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 20.h),
-              SizedBox(height: 20.h),
-              Text("Welcome Back!", style: AppTextStyles.mainTextStyle),
-              SizedBox(height: 10.h),
-              CustomTextInput(
-                controller: AppTextController.emailController,
-                hintText: "E-mail",
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.5),
+                BlendMode.darken,
               ),
-              SizedBox(height: 13.h),
-              CustomTextInput(
-                controller: AppTextController.passwordController,
-                hintText: "Password",
-                isSecureText: _isVisible,
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isVisible = !_isVisible;
-                    });
-                  },
-                  child: Icon(_isVisible ? Icons.visibility_off : Icons.visibility, size: 20.r, color: AppColors.primaryGrey),
-                ),
+              child: Image.asset(
+                'lib/assets/images/background_login_page.jpg',
+                fit: BoxFit.cover,
               ),
-              SizedBox(height: 15.h),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () {
-                    Get.to(() => ForgotPasswordScreen());
-                  },
-                  child: Text("Forgot Password?", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14, letterSpacing: 1.2, color: Colors.red[800])),
-                ),
-              ),
-              SizedBox(height: 30.h),
-              Consumer<LoadingController>(builder: (context, loadingController, child) {
-                return loadingController.isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(color: AppColors.primaryColor),
-                      )
-                    : PrimaryButton(
-                        title: "Login",
-                        onPressed: () {
-                          AuthServices()
-                              .login(
-                            context: context,
-                            email: AppTextController.emailController.text,
-                            password: AppTextController.passwordController.text,
-                          )
-                              .whenComplete(() {
-                            AppTextController().clearTextInput();
+            ),
+          ),
+          Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 40.h),
+                    Text(
+                      "Welcome Back!",
+                      style: AppTextStyles.nunitoBold.copyWith(
+                        fontSize: 28.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    CustomTextInput(
+                      controller: AppTextController.emailController,
+                      hintText: "E-mail",
+                    ),
+                    SizedBox(height: 13.h),
+                    CustomTextInput(
+                      controller: AppTextController.passwordController,
+                      hintText: "Password",
+                      isSecureText: _isVisible,
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isVisible = !_isVisible;
                           });
                         },
-                      );
-              }),
-              SizedBox(height: 25.h),
-              AuthFooterWidget(
-                title: "Don't have an account",
-                screenName: "Sign Up",
-                titleStyle: AppTextStyles.nunitoBold.copyWith(
-                  fontSize: 16.sp,
-                  color: Colors.blue,
+                        child: Icon(
+                          _isVisible ? Icons.visibility_off : Icons.visibility,
+                          size: 20.r,
+                          color: AppColors.primaryGrey,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.h),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(() => ForgotPasswordScreen());
+                        },
+                        child: Text(
+                          "Forgot Password?",
+                          style: AppTextStyles.nunitoBold.copyWith(
+                            fontSize: 14,
+                            letterSpacing: 1.2,
+                            color: Color.fromARGB(255, 216, 60, 60),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 30.h),
+                    Consumer<LoadingController>(
+                      builder: (context, loadingController, child) {
+                        return loadingController.isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primaryColor,
+                                ),
+                              )
+                            : Column(
+                                children: [
+                                  PrimaryButton(
+                                    title: "Login",
+                                    onPressed: () async {
+                                      await AuthServices().login(
+                                        context: context,
+                                        email: AppTextController.emailController.text,
+                                        password: AppTextController.passwordController.text,
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(height: 10.h),
+                                  GoogleSignInButton(),
+                                ],
+                              );
+                      },
+                    ),
+                    SizedBox(height: 25.h),
+                    AuthFooterWidget(
+                      title: "Don't have an account? ",
+                      screenName: "Sign Up",
+                      titleStyle: AppTextStyles.nunitoBold.copyWith(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                      ),
+                      screenNameStyle: AppTextStyles.nunitoBold.copyWith(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Get.to(() => SignUpScreen());
+                      },
+                    ),
+                    SizedBox(height: 25.h),
+                  ],
                 ),
-                onPressed: () {
-                  Get.to(() => SignUpScreen());
-                },
-              )
-            ],
+              ),
+            ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class GoogleSignInButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        final response = await AuthServices().signInWithGoogle();
+        Get.snackbar('Google Sign-In', response, snackPosition: SnackPosition.BOTTOM);
+      },
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 15.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5.r),
+          border: Border.all(color: AppColors.primaryColor),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'lib/assets/images/google_sign_in.png', // Make sure you have this asset in your project
+              height: 24.h,
+              width: 24.w,
+            ),
+            SizedBox(width: 10.w),
+            Text(
+              'Sign in with Google',
+              style: AppTextStyles.nunitoBold.copyWith(color: AppColors.primaryColor),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

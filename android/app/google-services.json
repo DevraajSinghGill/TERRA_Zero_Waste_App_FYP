@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:67848000414:android:9055565b02c044fa7a3c8f",
+        "mobilesdk_app_id": "1:67848000414:android:636e8340cadb9a467a3c8f",
         "android_client_info": {
-          "package_name": "com.iktechsol.terra_zero_waste_app"
+          "package_name": "com.ik.terra_zero_waste_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "67848000414-7fl5nsmjtk0s1oj81k6ff3t5ok4g4gun.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA3dCI_9TP1UJEbur1VPGfR8sqHg2kjuZY"
@@ -20,7 +25,91 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "67848000414-7fl5nsmjtk0s1oj81k6ff3t5ok4g4gun.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "67848000414-hu3ot3av0gk4ud9pd5g3nl2e214mi9r5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.iktechsol.terraZeroWasteApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67848000414:android:00c4b5ced27a51c87a3c8f",
+        "android_client_info": {
+          "package_name": "com.iktechsol.terra_zero_waste"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "67848000414-7fl5nsmjtk0s1oj81k6ff3t5ok4g4gun.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3dCI_9TP1UJEbur1VPGfR8sqHg2kjuZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "67848000414-7fl5nsmjtk0s1oj81k6ff3t5ok4g4gun.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "67848000414-hu3ot3av0gk4ud9pd5g3nl2e214mi9r5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.iktechsol.terraZeroWasteApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67848000414:android:9055565b02c044fa7a3c8f",
+        "android_client_info": {
+          "package_name": "com.iktechsol.terra_zero_waste_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "67848000414-7fl5nsmjtk0s1oj81k6ff3t5ok4g4gun.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3dCI_9TP1UJEbur1VPGfR8sqHg2kjuZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "67848000414-7fl5nsmjtk0s1oj81k6ff3t5ok4g4gun.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "67848000414-hu3ot3av0gk4ud9pd5g3nl2e214mi9r5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.iktechsol.terraZeroWasteApp"
+              }
+            }
+          ]
         }
       }
     }

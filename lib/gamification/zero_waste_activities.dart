@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:terra_zero_waste_app/gamification/redeem_voucher_page.dart';
-import 'package:terra_zero_waste_app/gamification/total_points_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'activity_card.dart'; // Import the ActivityCard widget
@@ -50,8 +48,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
     User? user = _auth.currentUser;
     if (user != null) {
       userId = user.uid;
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
       if (userDoc.exists) {
         setState(() {
           totalPoints = userDoc['totalPoints'] ?? 0;

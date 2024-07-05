@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ import 'package:terra_zero_waste_app/models/user_model.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/custom_navbar.dart';
 import 'package:terra_zero_waste_app/services/image_compress_services.dart';
 import 'package:terra_zero_waste_app/services/storage_services.dart';
-
 import '../controllers/loading_controller.dart';
 import '../screens/auth/login_screen.dart';
 import '../widgets/custom_msg.dart';
@@ -107,6 +105,53 @@ class AuthServices extends ChangeNotifier {
         showCustomMsg(context, e.message!);
       }
     }
+  }
+
+  Future<String> signInWithGoogle() async {
+    String response = "";
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+        final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+        final User? user = userCredential.user;
+
+        if (user != null) {
+          final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+
+          if (!userDoc.exists) {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .set(
+              {
+                'displayName': user.displayName,
+                'email': user.email,
+                'photoURL': user.photoURL,
+                'description': "",
+                'followers': [],
+                'following': [],
+              },
+            );
+          }
+        }
+        response = "Login Successful";
+        Get.offAll(() => CustomNavBar());
+      } else {
+        response = "Oops! Login unsuccessful!";
+      }
+    } catch (error) {
+      return error.toString();
+    }
+    return response;
   }
 
   static signOut() async {

@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '67848000414',
     projectId: 'terra-zero-waste-app-a10c9',
     storageBucket: 'terra-zero-waste-app-a10c9.appspot.com',
+    iosClientId: '67848000414-hu3ot3av0gk4ud9pd5g3nl2e214mi9r5.apps.googleusercontent.com',
     iosBundleId: 'com.iktechsol.terraZeroWasteApp',
   );
 
@@ -73,6 +74,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '67848000414',
     projectId: 'terra-zero-waste-app-a10c9',
     storageBucket: 'terra-zero-waste-app-a10c9.appspot.com',
+    iosClientId: '67848000414-hu3ot3av0gk4ud9pd5g3nl2e214mi9r5.apps.googleusercontent.com',
     iosBundleId: 'com.iktechsol.terraZeroWasteApp',
   );
 
@@ -85,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'terra-zero-waste-app-a10c9.appspot.com',
     measurementId: 'G-NP10RTE85C',
   );
+
 }

@@ -16,82 +16,30 @@ class HomePageActivities extends StatelessWidget {
       future: _getUserData(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.green, // Changed to green
-              title: Text(
-                'Home TERRA Activities',
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white), // Text color set to white
-              ),
-              centerTitle: true,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white), // Icon color set to white
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
+          return _buildScaffoldWithAppBar(
+            context,
+            'Home TERRA Activities',
             body: Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.green, // Changed to green
-              title: Text(
-                'Home TERRA Activities',
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white), // Text color set to white
-              ),
-              centerTitle: true,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white), // Icon color set to white
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
+          return _buildScaffoldWithAppBar(
+            context,
+            'Home TERRA Activities',
             body: Center(child: Text("Error: ${snapshot.error}")),
           );
         } else if (snapshot.hasData && snapshot.data!.exists) {
           Map<String, dynamic> userData =
               snapshot.data?.data() as Map<String, dynamic>;
           String formattedName = _formatName(userData['username'] ?? '');
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.green[900], // Changed to green
-              title: Text(
-                'TERRA Activities',
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 18, color: Colors.white), // Text color set to white
-              ),
-              centerTitle: true,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white), // Icon color set to white
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
+          return _buildScaffoldWithAppBar(
+            context,
+            'TERRA Activities',
             body: _buildUserInterface(context, userData),
           );
         } else {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.green, // Changed to green
-              title: Text(
-                'TERRA Activities',
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white), // Text color set to white
-              ),
-              centerTitle: true,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white), // Icon color set to white
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
+          return _buildScaffoldWithAppBar(
+            context,
+            'TERRA Activities',
             body: Center(child: Text("No user data available")),
           );
         }
@@ -107,9 +55,33 @@ class HomePageActivities extends StatelessWidget {
     throw Exception('No user logged in');
   }
 
-  Widget _buildUserInterface(BuildContext context, Map<String, dynamic> userData) {
+  Scaffold _buildScaffoldWithAppBar(BuildContext context, String title,
+      {required Widget body}) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        title: Text(
+          title,
+          style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: body,
+    );
+  }
+
+  Widget _buildUserInterface(
+      BuildContext context, Map<String, dynamic> userData) {
     String formattedName = _formatName(userData['username'] ?? '');
-    int totalPoints = userData['totalPoints'] ?? 0; // Ensure totalPoints is present in your Firestore document
+    int totalPoints = userData['totalPoints'] ?? 0;
+    int pointsPerTask = userData['pointsPerTask'] ?? 10; // Ensure pointsPerTask is present in your Firestore document
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -118,34 +90,37 @@ class HomePageActivities extends StatelessWidget {
           SizedBox(height: 10),
           _buildWelcomeSection(formattedName),
           SizedBox(height: 10),
-          _buildPointsSection(formattedName, totalPoints),
+          _buildPointsSection(totalPoints),
           SizedBox(height: 20),
           _buildOptionCard(
-              context,
-              'View Catalog of Activities',
-              'lib/assets/gif_icons/list.gif',
-              'Explore various activities to promote zero waste and earn more points.',
-              () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ZeroWasteActivities())),
-              Colors.green[800]!,
-              Colors.green[900]!),
+            context,
+            'View Catalog of Activities',
+            'lib/assets/gif_icons/list.gif',
+            'Explore various activities to promote zero waste and earn more points.',
+            () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ZeroWasteActivities())),
+            Colors.green[800]!,
+            Colors.green[900]!,
+          ),
           SizedBox(height: 20),
           _buildOptionCard(
-              context,
-              'View Total Points',
-              'lib/assets/gif_icons/history.gif',
-              'Review your accumulated points and completed tasks.',
-              () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TotalPointsPage(
-                          totalPoints: totalPoints,
-                          completedTasks: [],
-                          userId: _auth.currentUser!.uid))),
-              Colors.green[800]!,
-              Colors.green[900]!),
+            context,
+            'View Total Points',
+            'lib/assets/gif_icons/history.gif',
+            'Review your accumulated points and completed tasks.',
+            () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TotalPointsPage(
+                        totalPoints: totalPoints,
+                        completedTasks: [],
+                        userId: _auth.currentUser!.uid,
+                        pointsPerTask: pointsPerTask))),
+            Colors.green[800]!,
+            Colors.green[900]!,
+          ),
           SizedBox(height: 20),
           _buildRedeemSection(context, totalPoints),
         ],
@@ -168,16 +143,17 @@ class HomePageActivities extends StatelessWidget {
           children: [
             Text("Hello, $userName ",
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black)),
-            // Display the GIF without shadow
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.black)),
             Container(
               width: 50,
               height: 50,
-              child: Image.asset("lib/assets/gif_icons/mother-earth-day.gif", fit: BoxFit.cover),
+              child: Image.asset("lib/assets/gif_icons/mother-earth-day.gif",
+                  fit: BoxFit.cover),
             ),
           ],
         ),
-        // Display the other icon (for layout purposes, you can adjust as needed)
         Container(
           width: 50,
           height: 50,
@@ -189,7 +165,7 @@ class HomePageActivities extends StatelessWidget {
     );
   }
 
-  Widget _buildPointsSection(String userName, int totalPoints) {
+  Widget _buildPointsSection(int totalPoints) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: _buildBoxDecoration(),
@@ -203,23 +179,35 @@ class HomePageActivities extends StatelessWidget {
               children: [
                 RichText(
                   text: TextSpan(
-                    text: '$userName, you have ',
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.green[900]),
+                    text: 'You have ',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: Colors.green[900]),
                     children: <TextSpan>[
                       TextSpan(
                         text: '$totalPoints',
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 14, color: Color.fromARGB(255, 217, 25, 25)),
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: Color.fromARGB(255, 217, 25, 25)),
                       ),
                       TextSpan(
                         text: ' points',
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.green[900]),
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: Colors.green[900]),
                       ),
                     ],
                   ),
                 ),
                 Text(
                   'remaining',
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 10, color: Colors.green[900]),
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 10,
+                      color: Colors.green[900]),
                 ),
               ],
             ),
@@ -234,12 +222,12 @@ class HomePageActivities extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        gradient:
-            LinearGradient(colors: [Colors.green[400]!, Colors.green[600]!]),
+        gradient: LinearGradient(
+            colors: [Colors.green[400]!, Colors.green[600]!]),
       ),
       child: Column(
         children: [
-          _buildIconContainer('lib/assets/gif_icons/coupon.gif', 70.0), // Bigger size for the coupon icon
+          _buildIconContainer('lib/assets/gif_icons/coupon.gif', 70.0),
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
@@ -263,7 +251,9 @@ class HomePageActivities extends StatelessWidget {
                 SizedBox(width: 10),
                 Text('Redeem Now',
                     style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w700, fontSize: 16, color: Colors.white)),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white)),
                 SizedBox(width: 10),
                 Icon(Icons.arrow_forward, color: Colors.white, size: 20),
               ],
@@ -272,7 +262,9 @@ class HomePageActivities extends StatelessWidget {
           SizedBox(height: 10),
           Text('Use this QR code when you checkout to get points',
               style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w400, fontSize: 14, color: Colors.white),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: Colors.white),
               textAlign: TextAlign.center),
         ],
       ),
@@ -323,7 +315,8 @@ class HomePageActivities extends StatelessWidget {
                             fontSize: 16,
                             color: Colors.white)),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
+                  Icon(Icons.arrow_forward_ios,
+                      color: Colors.white, size: 20),
                 ],
               ),
               Padding(
@@ -365,7 +358,7 @@ class HomePageActivities extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: Colors.white, // Ensure the background is white for the icons
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(

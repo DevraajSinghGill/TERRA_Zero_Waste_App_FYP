@@ -1,21 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class TotalPointsPage extends StatelessWidget {
+class TotalPointsPage extends StatefulWidget {
   final int totalPoints;
   final List<Map<String, dynamic>> completedTasks;
   final String userId;
-  final int totalCompletedTasks;
+  final int pointsPerTask;
 
   TotalPointsPage({
     required this.totalPoints,
     required this.completedTasks,
     required this.userId,
-  }) : totalCompletedTasks = calculateTotalCompletedTasks(totalPoints);
+    required this.pointsPerTask,
+  });
 
-  static int calculateTotalCompletedTasks(int totalPoints) {
-    const int pointsPerTask = 10; // Assuming each task gives 10 points
-    return totalPoints ~/ pointsPerTask;
+  @override
+  _TotalPointsPageState createState() => _TotalPointsPageState();
+}
+
+class _TotalPointsPageState extends State<TotalPointsPage> {
+  late int totalCompletedTasks;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeCompletedTasks();
+  }
+
+  Future<void> _initializeCompletedTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the stored points per task and completed tasks count
+    int storedPointsPerTask = prefs.getInt('${widget.userId}_pointsPerTask') ?? widget.pointsPerTask;
+    int storedCompletedTasks = prefs.getInt('${widget.userId}_completedTasks') ?? 0;
+
+    // Calculate completed tasks with current points per task
+    int calculatedCompletedTasks = widget.totalPoints ~/ widget.pointsPerTask;
+
+    // Ensure that the total completed tasks doesn't decrease
+    if (widget.pointsPerTask == storedPointsPerTask) {
+      totalCompletedTasks = calculatedCompletedTasks > storedCompletedTasks
+          ? calculatedCompletedTasks
+          : storedCompletedTasks;
+    } else {
+      // If points per task have changed, recalculate the completed tasks
+      totalCompletedTasks = calculatedCompletedTasks;
+    }
+
+    // Update the stored values if necessary
+    if (totalCompletedTasks > storedCompletedTasks || widget.pointsPerTask != storedPointsPerTask) {
+      await prefs.setInt('${widget.userId}_completedTasks', totalCompletedTasks);
+      await prefs.setInt('${widget.userId}_pointsPerTask', widget.pointsPerTask);
+    }
+
+    setState(() {});
   }
 
   @override
@@ -75,7 +114,7 @@ class TotalPointsPage extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            '$totalPoints',
+            '${widget.totalPoints}',
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.w900,
               fontSize: 24,
@@ -99,9 +138,9 @@ class TotalPointsPage extends StatelessWidget {
   Widget _buildCompletedTasksSection() {
     return Expanded(
       child: ListView.builder(
-        itemCount: completedTasks.length,
+        itemCount: widget.completedTasks.length,
         itemBuilder: (context, index) {
-          final task = completedTasks[index];
+          final task = widget.completedTasks[index];
           return Card(
             elevation: 3,
             shape: RoundedRectangleBorder(

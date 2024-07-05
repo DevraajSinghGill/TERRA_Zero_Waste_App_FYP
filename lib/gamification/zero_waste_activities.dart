@@ -13,11 +13,9 @@ class ZeroWasteActivities extends StatefulWidget {
 
 class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
     with SingleTickerProviderStateMixin {
-  int totalPoints = 0;
   late ConfettiController _confettiController;
   late AnimationController _animationController;
   late Animation<Offset> _offsetAnimation;
-  GlobalKey _totalPointsKey = GlobalKey();
   List<Map<String, dynamic>> completedTasks = [];
   late String userId;
 
@@ -50,10 +48,6 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
       userId = user.uid;
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
       if (userDoc.exists) {
-        setState(() {
-          totalPoints = userDoc['totalPoints'] ?? 0;
-        });
-
         QuerySnapshot completedTasksSnapshot = await _firestore
             .collection('users')
             .doc(user.uid)
@@ -100,7 +94,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
 
   void _showPointsFlyAnimation(int points) {
     RenderBox renderBox =
-        _totalPointsKey.currentContext!.findRenderObject() as RenderBox;
+        context.findRenderObject() as RenderBox;
     Offset offset = renderBox.localToGlobal(Offset.zero);
     double targetX = offset.dx + renderBox.size.width / 2;
     double targetY = offset.dy;
@@ -131,9 +125,6 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
     _animationController.forward().then((value) {
       overlayEntry.remove();
       _animationController.reset();
-      setState(() {
-        totalPoints += points;
-      });
     });
   }
 
@@ -259,117 +250,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
                 children: <Widget>[
                   _buildDescriptionBox(context),
                   SizedBox(height: 20),
-                  ActivityCard(
-                    title: 'Carry out Composting',
-                    description:
-                        'Set up a compost bin at home and start composting food scraps and yard waste for a month.',
-                    iconPath: 'lib/assets/gif_icons/composting.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('Carry out Composting', 100,
-                        'lib/assets/gif_icons/composting.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'Use Reusable Bags',
-                    description:
-                        'Bring your own reusable shopping bags to the store.',
-                    iconPath: 'lib/assets/gif_icons/shopping_bag.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('Use Reusable Bags', 100,
-                        'lib/assets/gif_icons/shopping_bag.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'Donate Items Away',
-                    description:
-                        'Donate items such as clothes, furniture, and other items you no longer need to a local thrift store or charity.',
-                    iconPath: 'lib/assets/gif_icons/charity.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('Donate Items Away', 100,
-                        'lib/assets/gif_icons/charity.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'Carpool',
-                    description:
-                        'Organize and participate in carpooling with friends and family to reduce the number of vehicles on the road',
-                    iconPath: 'lib/assets/gif_icons/mini-car.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask(
-                        'Carpool', 100, 'lib/assets/gif_icons/mini-car.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'Collect Rainwater',
-                    description:
-                        'Set up a rainwater harvesting system and use the collected water for watering your garden and plants.',
-                    iconPath: 'lib/assets/gif_icons/water.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('Collect Rainwater', 100,
-                        'lib/assets/gif_icons/water.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'Use Public Transport',
-                    description:
-                        'Use public transportation for your daily commute for a month.',
-                    iconPath: 'lib/assets/gif_icons/train.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('Use Public Transport', 100,
-                        'lib/assets/gif_icons/train.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'Do a Meal Plan',
-                    description:
-                        'Plan your meals for a week to minimize food waste and leftovers.',
-                    iconPath: 'lib/assets/gif_icons/meal_plan.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('Do a Meal Plan', 100,
-                        'lib/assets/gif_icons/meal_plan.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'Reusable Water Bottle',
-                    description:
-                        'Carry and use a reusable water bottle for a month instead of buying bottled water.',
-                    iconPath: 'lib/assets/gif_icons/bottle.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('Reusable Water Bottle', 100,
-                        'lib/assets/gif_icons/bottle.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'Grow Your Own Food',
-                    description:
-                        'Create and use your own cleaning products using natural ingredients.',
-                    iconPath: 'lib/assets/gif_icons/plant.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('Grow Your Own Food', 100,
-                        'lib/assets/gif_icons/plant.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  ActivityCard(
-                    title: 'DIY Cleaning Products',
-                    description:
-                        'Create and use your own cleaning products using natural ingredients.',
-                    iconPath: 'lib/assets/gif_icons/cleaning.gif',
-                    imagePath: '',
-                    points: 100,
-                    onComplete: () => completeTask('DIY Cleaning Products', 100,
-                        'lib/assets/gif_icons/cleaning.gif'),
-                  ),
-                  SizedBox(height: 8),
-                  // Add more activity cards here
+                  _buildActivityCards(),
                 ],
               ),
             ),
@@ -396,6 +277,124 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildActivityCards() {
+    return Column(
+      children: [
+        ActivityCard(
+          title: 'Carry out Composting',
+          description:
+              'Set up a compost bin at home and start composting food scraps and yard waste for a month.',
+          iconPath: 'lib/assets/gif_icons/composting.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('Carry out Composting', 100,
+              'lib/assets/gif_icons/composting.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'Use Reusable Bags',
+          description:
+              'Bring your own reusable shopping bags to the store.',
+          iconPath: 'lib/assets/gif_icons/shopping_bag.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('Use Reusable Bags', 100,
+              'lib/assets/gif_icons/shopping_bag.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'Donate Items Away',
+          description:
+              'Donate items such as clothes, furniture, and other items you no longer need to a local thrift store or charity.',
+          iconPath: 'lib/assets/gif_icons/charity.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('Donate Items Away', 100,
+              'lib/assets/gif_icons/charity.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'Carpool',
+          description:
+              'Organize and participate in carpooling with friends and family to reduce the number of vehicles on the road',
+          iconPath: 'lib/assets/gif_icons/mini-car.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask(
+              'Carpool', 100, 'lib/assets/gif_icons/mini-car.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'Collect Rainwater',
+          description:
+              'Set up a rainwater harvesting system and use the collected water for watering your garden and plants.',
+          iconPath: 'lib/assets/gif_icons/water.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('Collect Rainwater', 100,
+              'lib/assets/gif_icons/water.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'Use Public Transport',
+          description:
+              'Use public transportation for your daily commute for a month.',
+          iconPath: 'lib/assets/gif_icons/train.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('Use Public Transport', 100,
+              'lib/assets/gif_icons/train.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'Do a Meal Plan',
+          description:
+              'Plan your meals for a week to minimize food waste and leftovers.',
+          iconPath: 'lib/assets/gif_icons/meal_plan.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('Do a Meal Plan', 100,
+              'lib/assets/gif_icons/meal_plan.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'Reusable Water Bottle',
+          description:
+              'Carry and use a reusable water bottle for a month instead of buying bottled water.',
+          iconPath: 'lib/assets/gif_icons/bottle.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('Reusable Water Bottle', 100,
+              'lib/assets/gif_icons/bottle.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'Grow Your Own Food',
+          description:
+              'Create and use your own cleaning products using natural ingredients.',
+          iconPath: 'lib/assets/gif_icons/plant.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('Grow Your Own Food', 100,
+              'lib/assets/gif_icons/plant.gif'),
+        ),
+        SizedBox(height: 8),
+        ActivityCard(
+          title: 'DIY Cleaning Products',
+          description:
+              'Create and use your own cleaning products using natural ingredients.',
+          iconPath: 'lib/assets/gif_icons/cleaning.gif',
+          imagePath: '',
+          points: 100,
+          onComplete: () => completeTask('DIY Cleaning Products', 100,
+              'lib/assets/gif_icons/cleaning.gif'),
+        ),
+        SizedBox(height: 8),
+        // Add more activity cards here
+      ],
     );
   }
 

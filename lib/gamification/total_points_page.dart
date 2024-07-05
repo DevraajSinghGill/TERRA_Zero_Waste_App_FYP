@@ -5,12 +5,18 @@ class TotalPointsPage extends StatelessWidget {
   final int totalPoints;
   final List<Map<String, dynamic>> completedTasks;
   final String userId;
+  final int totalCompletedTasks;
 
   TotalPointsPage({
     required this.totalPoints,
     required this.completedTasks,
     required this.userId,
-  });
+  }) : totalCompletedTasks = calculateTotalCompletedTasks(totalPoints);
+
+  static int calculateTotalCompletedTasks(int totalPoints) {
+    const int pointsPerTask = 10; // Assuming each task gives 10 points
+    return totalPoints ~/ pointsPerTask;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +84,7 @@ class TotalPointsPage extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            'Total Completed Tasks: ${completedTasks.length}',
+            'Total Completed Tasks: $totalCompletedTasks',
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.w500,
               fontSize: 14,
@@ -103,12 +109,14 @@ class TotalPointsPage extends StatelessWidget {
             ),
             margin: EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
-              leading: Image.asset(
-                task['icon'],
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),
+              leading: task['icon'] != null
+                  ? Image.asset(
+                      task['icon'],
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    )
+                  : Icon(Icons.check_circle, size: 50, color: Colors.green),
               title: Text(
                 task['task'],
                 style: GoogleFonts.poppins(

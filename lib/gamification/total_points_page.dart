@@ -72,7 +72,7 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -81,7 +81,7 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
             SizedBox(height: 20),
             _buildCompletedTasksSection(),
             SizedBox(height: 20),
-            _buildCompletedTasksBox(),
+            Expanded(child: _buildCompletedTasksBox()),  // Make the list scrollable within the remaining space
           ],
         ),
       ),
@@ -207,8 +207,6 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
         }
 
         return ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
           itemCount: completedTasks.length,
           itemBuilder: (context, index) {
             return Card(

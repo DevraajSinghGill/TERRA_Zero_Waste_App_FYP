@@ -1,11 +1,11 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/constants/app_colors.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/controllers/image_controller.dart';
@@ -27,16 +27,36 @@ class _EditPostScreenState extends State<EditPostScreen> {
   final TextEditingController _captionController = TextEditingController();
   List _images = [];
   List<File> _newImageList = [];
-
-  getImagesFromDb() async {
-    _images = widget.postModel.postImages!;
-  }
+  String? _imageIconUrl;
+  String? _captionIconUrl;
 
   @override
   void initState() {
     super.initState();
     _captionController.text = widget.postModel.caption;
     getImagesFromDb();
+    _loadGifIcons();
+  }
+
+  Future<void> getImagesFromDb() async {
+    _images = widget.postModel.postImages!;
+  }
+
+  Future<void> _loadGifIcons() async {
+    try {
+      String imageIconUrl = await FirebaseStorage.instance
+          .ref('image_icon.gif') // Replace with your file path in Firebase Storage
+          .getDownloadURL();
+      String captionIconUrl = await FirebaseStorage.instance
+          .ref('caption_icon.gif') // Replace with your file path in Firebase Storage
+          .getDownloadURL();
+      setState(() {
+        _imageIconUrl = imageIconUrl;
+        _captionIconUrl = captionIconUrl;
+      });
+    } catch (e) {
+      print('Error loading GIF icons: $e');
+    }
   }
 
   @override
@@ -55,11 +75,13 @@ class _EditPostScreenState extends State<EditPostScreen> {
               SizedBox(height: 20), // Added space
               Row(
                 children: [
-                  Image.asset(
-                    'lib/assets/gif_icons/image_icon.gif',
-                    height: 40.h,
-                    width: 40.w,
-                  ),
+                  _imageIconUrl != null
+                      ? Image.network(
+                          _imageIconUrl!,
+                          height: 40.h,
+                          width: 40.w,
+                        )
+                      : CircularProgressIndicator(),
                   SizedBox(width: 10),
                   Text("Select Image", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp)),
                 ],
@@ -135,9 +157,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
                               );
                             },
                           );
-                          // imageController.pickImage(ImageSource.gallery).then((value) {
-                          //   _newImageList.add(File(imageController.selectedImage!.path));
-                          // });
                         },
                         child: Icon(Icons.add_circle, color: AppColors.primaryColor, size: 24),
                       ),
@@ -228,11 +247,13 @@ class _EditPostScreenState extends State<EditPostScreen> {
               SizedBox(height: 20), // Additional space
               Row(
                 children: [
-                  Image.asset(
-                    'lib/assets/gif_icons/caption_icon.gif',
-                    height: 40.h,
-                    width: 40.w,
-                  ),
+                  _captionIconUrl != null
+                      ? Image.network(
+                          _captionIconUrl!,
+                          height: 40.h,
+                          width: 40.w,
+                        )
+                      : CircularProgressIndicator(),
                   SizedBox(width: 10),
                   Text("Add Caption", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp)),
                 ],

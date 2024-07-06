@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/chatbot/chatbot_page.dart';
 import 'package:terra_zero_waste_app/constants/app_assets.dart';
 import 'package:terra_zero_waste_app/constants/app_colors.dart';
@@ -75,48 +76,50 @@ class CustomDrawerWidget extends StatelessWidget {
           ),
           SizedBox(height: 2.h),
           Divider(color: Colors.grey[300]),
-          Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                CustomListTile(
-                  icon: 'lib/assets/gif_icons/edit_profile_icon.gif',
-                  title: "Edit Profile",
-                  onPressed: () {
-                    Get.to(() => EditProfileScreen(
-                        userModel: userController.userModel!));
-                  },
-                ),
-                CustomListTile(
-                  icon: 'lib/assets/gif_icons/chatbot_icon.gif',
-                  title: "TERRA Chatbot",
-                  onPressed: () {
-                    Get.to(() => ChatbotPage());
-                  },
-                ),
-                CustomListTile(
-                  icon: 'lib/assets/gif_icons/earth_banner_icon.gif',
-                  title: "TERRA Activities",
-                  onPressed: () {
-                    Get.to(() => HomePageActivities());
-                  },
-                ),
-                SizedBox(height: 200.h), // Added space here
-                Divider(color: Colors.grey[300]),
-                CustomListTile(
-                  icon: 'lib/assets/gif_icons/log_out_icon.gif',
-                  title: "LogOut",
-                  onPressed: () {
-                    showCustomAlertDialog(
-                      context: context,
-                      content: "Are you sure to logout?",
-                      onPressed: () {
-                        AuthServices.signOut();
-                      },
-                    );
-                  },
-                ),
-              ],
+          Expanded(
+            child: Container(
+              color: Colors.white, // Ensure the background is white
+              child: ListView(
+                children: [
+                  CustomListTile(
+                    iconPath: 'edit_profile_icon.gif', // Replace with your file path in Firebase Storage
+                    title: "Edit Profile",
+                    onPressed: () {
+                      Get.to(() => EditProfileScreen(
+                          userModel: userController.userModel!));
+                    },
+                  ),
+                  CustomListTile(
+                    iconPath: 'chatbot_icon.gif', // Replace with your file path in Firebase Storage
+                    title: "TERRA Chatbot",
+                    onPressed: () {
+                      Get.to(() => ChatbotPage());
+                    },
+                  ),
+                  CustomListTile(
+                    iconPath: 'earth_banner_icon.gif', // Replace with your file path in Firebase Storage
+                    title: "TERRA Activities",
+                    onPressed: () {
+                      Get.to(() => HomePageActivities());
+                    },
+                  ),
+                  SizedBox(height: 200.h), // Added space here
+                  Divider(color: Colors.grey[300]),
+                  CustomListTile(
+                    iconPath: 'log_out_icon.gif', // Replace with your file path in Firebase Storage
+                    title: "LogOut",
+                    onPressed: () {
+                      showCustomAlertDialog(
+                        context: context,
+                        content: "Are you sure to logout?",
+                        onPressed: () {
+                          AuthServices.signOut();
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -125,31 +128,58 @@ class CustomDrawerWidget extends StatelessWidget {
   }
 }
 
-class CustomListTile extends StatelessWidget {
-  final dynamic icon; // Updated to dynamic to handle both IconData and String
+class CustomListTile extends StatefulWidget {
+  final String iconPath;
   final String title;
   final VoidCallback onPressed;
 
   const CustomListTile({
-    required this.icon,
+    required this.iconPath,
     required this.title,
     required this.onPressed,
   });
 
   @override
+  _CustomListTileState createState() => _CustomListTileState();
+}
+
+class _CustomListTileState extends State<CustomListTile> {
+  String? _iconUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGifIcon();
+  }
+
+  Future<void> _loadGifIcon() async {
+    try {
+      String url = await FirebaseStorage.instance
+          .ref(widget.iconPath)
+          .getDownloadURL();
+      setState(() {
+        _iconUrl = url;
+      });
+    } catch (e) {
+      print('Error loading GIF icon: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: icon is String
-          ? Image.asset(icon,
-              width: 48.w, height: 48.h) // Increased size for GIF icons
-          : Icon(icon,
-              size: 48.sp,
-              color: Colors.black), // Increased size for regular icons
+      leading: _iconUrl != null
+          ? Image.network(
+              _iconUrl!,
+              width: 48.w,
+              height: 48.h,
+            )
+          : CircularProgressIndicator(),
       title: Text(
-        title,
+        widget.title,
         style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp),
       ),
-      onTap: onPressed,
+      onTap: widget.onPressed,
     );
   }
 }

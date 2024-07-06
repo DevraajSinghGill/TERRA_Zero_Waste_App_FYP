@@ -7,6 +7,7 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 
 class ChatbotPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class ChatbotPage extends StatefulWidget {
 
 class _HomePageState extends State<ChatbotPage> {
   late Gemini gemini;
-
+  String? _gifIconUrl;
   List<ChatMessage> messages = [];
 
   ChatUser currentUser = ChatUser(id: "0", firstName: "User");
@@ -33,6 +34,20 @@ class _HomePageState extends State<ChatbotPage> {
   void initState() {
     super.initState();
     gemini = Gemini.instance; // Direct initialization
+    _loadGifIcon();
+  }
+
+  Future<void> _loadGifIcon() async {
+    try {
+      String url = await FirebaseStorage.instance
+          .ref('chatbot_icon.gif') // Replace with your file path in Firebase Storage
+          .getDownloadURL();
+      setState(() {
+        _gifIconUrl = url;
+      });
+    } catch (e) {
+      print('Error loading GIF icon: $e');
+    }
   }
 
   @override
@@ -79,11 +94,13 @@ class _HomePageState extends State<ChatbotPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            'lib/assets/gif_icons/chatbot_icon.gif',
-            height: 100,
-            width: 100,
-          ),
+          _gifIconUrl != null
+              ? Image.network(
+                  _gifIconUrl!,
+                  height: 100,
+                  width: 100,
+                )
+              : CircularProgressIndicator(),
           SizedBox(height: 20),
           Text(
             "Chat with a Chatbot!",

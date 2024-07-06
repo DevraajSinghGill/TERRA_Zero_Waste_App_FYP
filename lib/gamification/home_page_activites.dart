@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/gamification/redeem_voucher_page.dart';
 import 'package:terra_zero_waste_app/gamification/total_points_page.dart';
 import 'package:terra_zero_waste_app/gamification/zero_waste_activities.dart';
@@ -74,6 +75,7 @@ class HomePageActivities extends StatelessWidget {
         ),
       ),
       body: body,
+      backgroundColor: Colors.white, // Set background color to white
     );
   }
 
@@ -92,7 +94,7 @@ class HomePageActivities extends StatelessWidget {
           _buildOptionCard(
             context,
             'View Catalog of Activities',
-            'lib/assets/gif_icons/list.gif',
+            'image_icon.gif', // Firebase Storage path
             'Explore various activities to promote zero waste and earn more points.',
             () => Navigator.push(
                 context,
@@ -105,7 +107,7 @@ class HomePageActivities extends StatelessWidget {
           _buildOptionCard(
             context,
             'View Total Points',
-            'lib/assets/gif_icons/history.gif',
+            'history.gif', // Firebase Storage path
             'Review your accumulated points and completed tasks.',
             () => Navigator.push(
                 context,
@@ -131,138 +133,181 @@ class HomePageActivities extends StatelessWidget {
   }
 
   Widget _buildWelcomeSection(String userName) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Text("Hello, $userName ",
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    color: Colors.black)),
-            Container(
-              width: 50,
-              height: 50,
-              child: Image.asset("lib/assets/gif_icons/mother-earth-day.gif",
-                  fit: BoxFit.cover),
-            ),
-          ],
-        ),
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-      ],
+    return FutureBuilder<String>(
+      future: _getGifUrl('mother-earth-day.gif'), // Firebase Storage path
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Hello, $userName ",
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.black)),
+              CircularProgressIndicator(),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text("Hello, $userName ",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: Colors.black)),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    child: Image.network(snapshot.data!, fit: BoxFit.cover),
+                  ),
+                ],
+              ),
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 
   Widget _buildPointsSection(int totalPoints) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: _buildBoxDecoration(),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildIconContainer('lib/assets/gif_icons/money-bag.gif', 50.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+    return FutureBuilder<String>(
+      future: _getGifUrl('money-bag.gif'), // Firebase Storage path
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else {
+          return Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: _buildBoxDecoration(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                RichText(
-                  text: TextSpan(
-                    text: 'You have ',
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: Colors.green[900]),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: '$totalPoints',
-                        style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: Color.fromARGB(255, 217, 25, 25)),
+                _buildIconContainer(snapshot.data!, 50.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: 'You have ',
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: Colors.green[900]),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: '$totalPoints',
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: Color.fromARGB(255, 217, 25, 25)),
+                            ),
+                            TextSpan(
+                              text: ' points',
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: Colors.green[900]),
+                            ),
+                          ],
+                        ),
                       ),
-                      TextSpan(
-                        text: ' points',
+                      Text(
+                        'remaining',
                         style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                            fontSize: 10,
                             color: Colors.green[900]),
                       ),
                     ],
                   ),
                 ),
-                Text(
-                  'remaining',
-                  style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 10,
-                      color: Colors.green[900]),
-                ),
               ],
             ),
-          ),
-        ],
-      ),
+          );
+        }
+      },
     );
   }
 
   Widget _buildRedeemSection(BuildContext context, int totalPoints) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(
-            colors: [Colors.green[400]!, Colors.green[600]!]),
-      ),
-      child: Column(
-        children: [
-          _buildIconContainer('lib/assets/gif_icons/coupon.gif', 70.0),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RedeemVoucherPage(
-                          userId: _auth.currentUser!.uid,
-                          initialPoints: totalPoints)));
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+    return FutureBuilder<String>(
+      future: _getGifUrl('coupon.gif'), // Firebase Storage path
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else {
+          return Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              gradient: LinearGradient(
+                  colors: [Colors.green[400]!, Colors.green[600]!]),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            child: Column(
               children: [
-                Icon(Icons.qr_code, color: Colors.white, size: 20),
-                SizedBox(width: 10),
-                Text('Redeem Now',
+                _buildIconContainer(snapshot.data!, 70.0),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RedeemVoucherPage(
+                                userId: _auth.currentUser!.uid,
+                                initialPoints: totalPoints)));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.qr_code, color: Colors.white, size: 20),
+                      SizedBox(width: 10),
+                      Text('Redeem Now',
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: Colors.white)),
+                      SizedBox(width: 10),
+                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text('Use this QR code when you checkout to get points',
                     style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Colors.white)),
-                SizedBox(width: 10),
-                Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: Colors.white),
+                    textAlign: TextAlign.center),
               ],
             ),
-          ),
-          SizedBox(height: 10),
-          Text('Use this QR code when you checkout to get points',
-              style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: Colors.white),
-              textAlign: TextAlign.center),
-        ],
-      ),
+          );
+        }
+      },
     );
   }
 
@@ -274,58 +319,69 @@ class HomePageActivities extends StatelessWidget {
       VoidCallback onTap,
       Color startColor,
       Color endColor) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          gradient: LinearGradient(
-            colors: [startColor, endColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 0,
-              blurRadius: 6,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  _buildIconContainer(gifPath, 50.0),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: Text(title,
-                        style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: Colors.white)),
+    return FutureBuilder<String>(
+      future: _getGifUrl(gifPath), // Firebase Storage path
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else {
+          return GestureDetector(
+            onTap: onTap,
+            child: Container(
+              margin: EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                gradient: LinearGradient(
+                  colors: [startColor, endColor],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 0,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
                   ),
-                  Icon(Icons.arrow_forward_ios,
-                      color: Colors.white, size: 20),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(description,
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                        color: Colors.white70)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        _buildIconContainer(snapshot.data!, 50.0),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Text(title,
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  color: Colors.white)),
+                        ),
+                        Icon(Icons.arrow_forward_ios,
+                            color: Colors.white, size: 20),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(description,
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              color: Colors.white70)),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -348,7 +404,7 @@ class HomePageActivities extends StatelessWidget {
     );
   }
 
-  Widget _buildIconContainer(String gifPath, double size) {
+  Widget _buildIconContainer(String gifUrl, double size) {
     return Container(
       width: size,
       height: size,
@@ -365,8 +421,17 @@ class HomePageActivities extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
-        child: Image.asset(gifPath, fit: BoxFit.cover),
+        child: Image.network(gifUrl, fit: BoxFit.cover),
       ),
     );
+  }
+
+  Future<String> _getGifUrl(String fileName) async {
+    try {
+      return await FirebaseStorage.instance.ref(fileName).getDownloadURL();
+    } catch (e) {
+      print('Error loading GIF icon: $e');
+      return '';
+    }
   }
 }

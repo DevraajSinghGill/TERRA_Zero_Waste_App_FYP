@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:terra_zero_waste_app/constants/app_assets.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/controllers/user_controller.dart';
 import 'package:terra_zero_waste_app/models/user_model.dart';
@@ -18,6 +18,26 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _searchController = TextEditingController();
+  String? _gifUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGif();
+  }
+
+  Future<void> _loadGif() async {
+    try {
+      String url = await FirebaseStorage.instance
+          .ref('search_icon.gif') // replace with your file path in Firebase Storage
+          .getDownloadURL();
+      setState(() {
+        _gifUrl = url;
+      });
+    } catch (e) {
+      print('Error loading GIF: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +62,13 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: 150.h,
-                            child: Image.asset('lib/assets/gif_icons/search_icon.gif'),
-                          ),
+                          if (_gifUrl != null)
+                            SizedBox(
+                              height: 150.h,
+                              child: Image.network(_gifUrl!),
+                            )
+                          else
+                            CircularProgressIndicator(),
                           SizedBox(height: 20.h),
                           Text(
                             "Search User",

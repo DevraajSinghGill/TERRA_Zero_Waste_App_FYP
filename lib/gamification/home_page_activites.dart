@@ -38,10 +38,11 @@ class HomePageActivities extends StatelessWidget {
           Map<String, dynamic> userData =
               snapshot.data?.data() as Map<String, dynamic>;
           String formattedName = _formatName(userData['username'] ?? '');
+          int totalPoints = userData['totalPoints'] ?? 0;
           return _buildScaffoldWithAppBar(
             context,
             'TERRA Activities',
-            body: _buildUserInterface(context, userData),
+            body: _buildUserInterface(context, formattedName, totalPoints),
           );
         } else {
           return _buildScaffoldWithAppBar(
@@ -77,10 +78,7 @@ class HomePageActivities extends StatelessWidget {
   }
 
   Widget _buildUserInterface(
-      BuildContext context, Map<String, dynamic> userData) {
-    String formattedName = _formatName(userData['username'] ?? '');
-    int totalPoints = userData['totalPoints'] ?? 0;
-    int pointsPerTask = userData['pointsPerTask'] ?? 10; // Ensure pointsPerTask is present in your Firestore document
+      BuildContext context, String formattedName, int totalPoints) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -114,8 +112,7 @@ class HomePageActivities extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => TotalPointsPage(
                         totalPoints: totalPoints,
-                        userId: _auth.currentUser!.uid,
-                        pointsPerTask: pointsPerTask))),
+                        userId: _auth.currentUser!.uid))),
             Colors.green[800]!,
             Colors.green[900]!,
           ),

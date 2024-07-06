@@ -17,7 +17,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
   late AnimationController _animationController;
   late Animation<Offset> _offsetAnimation;
   List<Map<String, dynamic>> completedTasks = [];
-  late String userId;
+  String? userId;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -43,26 +43,31 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
   }
 
   Future<void> _fetchUserData() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      userId = user.uid;
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
-      if (userDoc.exists) {
-        QuerySnapshot completedTasksSnapshot = await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('completedTasks')
-            .get();
-        setState(() {
-          completedTasks = completedTasksSnapshot.docs
-              .map((doc) => {
-                    'task': doc['task'],
-                    'points': doc['points'],
-                    'icon': doc['icon'],
-                  })
-              .toList();
-        });
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        userId = user.uid;
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          QuerySnapshot completedTasksSnapshot = await _firestore
+              .collection('users')
+              .doc(user.uid)
+              .collection('completedTasks')
+              .get();
+          setState(() {
+            completedTasks = completedTasksSnapshot.docs
+                .map((doc) => {
+                      'task': doc['task'],
+                      'points': doc['points'],
+                      'icon': doc['icon'],
+                    })
+                .toList();
+          });
+        }
       }
+    } catch (e) {
+      print('Error fetching user data: $e');
+      // Handle error accordingly (e.g., show a message to the user)
     }
   }
 

@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 
 class TotalPointsPage extends StatefulWidget {
   final int totalPoints;
   final String userId;
-  final int pointsPerTask;
 
   TotalPointsPage({
     required this.totalPoints,
     required this.userId,
-    required this.pointsPerTask,
   });
 
   @override
@@ -20,6 +17,7 @@ class TotalPointsPage extends StatefulWidget {
 }
 
 class _TotalPointsPageState extends State<TotalPointsPage> {
+  static const int pointsPerTask = 100; // Fixed points per task
   late int totalCompletedTasks;
 
   @override
@@ -31,28 +29,14 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
   Future<void> _initializeCompletedTasks() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Get the stored points per task and completed tasks count
-    int storedPointsPerTask = prefs.getInt('${widget.userId}_pointsPerTask') ?? widget.pointsPerTask;
-    int storedCompletedTasks = prefs.getInt('${widget.userId}_completedTasks') ?? 0;
+    // Calculate completed tasks with fixed points per task
+    int calculatedCompletedTasks = widget.totalPoints ~/ pointsPerTask;
 
-    // Calculate completed tasks with current points per task
-    int calculatedCompletedTasks = widget.totalPoints ~/ widget.pointsPerTask;
+    // Update the stored completed tasks count
+    await prefs.setInt('${widget.userId}_completedTasks', calculatedCompletedTasks);
 
-    // Ensure that the total completed tasks doesn't decrease
-    if (widget.pointsPerTask == storedPointsPerTask) {
-      totalCompletedTasks = calculatedCompletedTasks > storedCompletedTasks
-          ? calculatedCompletedTasks
-          : storedCompletedTasks;
-    } else {
-      // If points per task have changed, recalculate the completed tasks
-      totalCompletedTasks = calculatedCompletedTasks;
-    }
-
-    // Update the stored values if necessary
-    if (totalCompletedTasks > storedCompletedTasks || widget.pointsPerTask != storedPointsPerTask) {
-      await prefs.setInt('${widget.userId}_completedTasks', totalCompletedTasks);
-      await prefs.setInt('${widget.userId}_pointsPerTask', widget.pointsPerTask);
-    }
+    // Ensure that the total completed tasks reflects the calculated value
+    totalCompletedTasks = calculatedCompletedTasks;
 
     setState(() {});
   }
@@ -81,10 +65,10 @@ class _TotalPointsPageState extends State<TotalPointsPage> {
             _buildPointsSection(),
             SizedBox(height: 20),
             _buildCompletedTasksSection(),
-            SizedBox(height: 20), // Added space before the description
+            SizedBox(height: 20),
             _buildDescriptionBox(),
             SizedBox(height: 20),
-            _buildScrollableCompletedTasksBox(), // Changed to a scrollable container
+            _buildScrollableCompletedTasksBox(),
           ],
         ),
       ),

@@ -34,11 +34,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.arrow_forward),
+            icon: Icon(Icons.group_rounded),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => GroupActivitiesPage()), // Update with the new screen
+                MaterialPageRoute(builder: (context) => GroupActivitiesPage(groupId: widget.groupId)),
               );
             },
           ),

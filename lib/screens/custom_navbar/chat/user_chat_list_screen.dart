@@ -26,45 +26,45 @@ class _UserChatListScreenState extends State<UserChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-          child: Column(
-            children: [
-              SizedBox(height: 20), // Add space between the top and search bar
-              SearchTextInput(
-                controller: _searchController,
-                onChange: (v) {
-                  setState(() {});
-                },
-              ),
-              SizedBox(height: 10),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[800],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: Column(
+          children: [
+            SizedBox(height: 20), // Add space between the top and search bar
+            SearchTextInput(
+              controller: _searchController,
+              onChange: (v) {
+                setState(() {});
+              },
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[800],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    onPressed: () {
-                      Get.to(() => AddingMembersToGroup());
-                    },
-                    child: Text(
-                      "Make a Group Chat",
-                      style: AppTextStyles.nunitoSemiBod.copyWith(
-                        fontSize: 18,
-                        color: AppColors.primaryWhite,
-                      ),
+                  ),
+                  onPressed: () {
+                    Get.to(() => AddingMembersToGroup());
+                  },
+                  child: Text(
+                    "Make a Group Chat",
+                    style: AppTextStyles.nunitoSemiBod.copyWith(
+                      fontSize: 18,
+                      color: AppColors.primaryWhite,
                     ),
                   ),
                 ),
               ),
-              StreamBuilder(
+            ),
+            Expanded(
+              child: StreamBuilder(
                 stream: ChatStream().combineChatStreams(),
                 builder:
                     (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
@@ -133,8 +133,8 @@ class _UserChatListScreenState extends State<UserChatListScreen> {
                   );
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

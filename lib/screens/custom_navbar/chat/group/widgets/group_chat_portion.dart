@@ -57,7 +57,7 @@ class GroupChatPortion extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   groupChatModel.username[0].toUpperCase(),
-                                  style: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp, color: AppColors.primaryColor),
+                                  style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 16.sp, color: AppColors.primaryColor),
                                 ),
                               ),
                             )

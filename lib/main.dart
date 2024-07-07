@@ -9,11 +9,11 @@ import 'package:terra_zero_waste_app/constants/app_colors.dart';
 import 'package:terra_zero_waste_app/controllers/comment_controller.dart';
 import 'package:terra_zero_waste_app/controllers/post_controller.dart';
 import 'package:terra_zero_waste_app/controllers/user_controller.dart';
+import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/task_group_provider.dart';
 import 'package:terra_zero_waste_app/screens/splash/splash_screen.dart';
-
-import 'controllers/image_controller.dart';
-import 'controllers/loading_controller.dart';
-import 'firebase_options.dart';
+import 'package:terra_zero_waste_app/controllers/image_controller.dart';
+import 'package:terra_zero_waste_app/controllers/loading_controller.dart';
+import 'package:terra_zero_waste_app/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => UserController()),
             ChangeNotifierProvider(create: (_) => PostController()),
             ChangeNotifierProvider(create: (_) => CommentController()),
+            ChangeNotifierProvider(create: (_) => TaskProvider()), // Add TaskProvider here
           ],
           child: GetMaterialApp(
             title: 'TERRA Zero Waste App',

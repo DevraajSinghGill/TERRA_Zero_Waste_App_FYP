@@ -17,6 +17,7 @@ class AddingMembersToGroup extends StatefulWidget {
 
 class _AddingMembersToGroupState extends State<AddingMembersToGroup> {
   List _userIds = [FirebaseAuth.instance.currentUser!.uid];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,11 +78,20 @@ class _AddingMembersToGroupState extends State<AddingMembersToGroup> {
                             }
                             setState(() {});
                           },
-                          child: _userIds.contains(userModel.userId) ? Text("Remove") : Text("Add"),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(_userIds.contains(userModel.userId) ? Icons.remove : Icons.add),
+                              SizedBox(width: 5),
+                              Text(_userIds.contains(userModel.userId) ? "Remove" : "Add"),
+                            ],
+                          ),
                           style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          )),
+                            foregroundColor: Colors.white, backgroundColor: _userIds.contains(userModel.userId) ? Colors.red : Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
                         ),
                       ),
                       Divider(height: 0.2),

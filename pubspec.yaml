@@ -62,6 +62,7 @@ dependencies:
   flutter_gemini: ^2.0.4
   google_sign_in: ^6.2.1
   shared_preferences: ^2.2.3
+  carousel_slider: ^4.2.1
 
 
 dev_dependencies:
@@ -93,12 +94,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - lib/assets/images/login_page.png
+
    - lib/assets/images/background_login_page.jpg
-   - lib/assets/images/zero_waste_image_1.jpg
-   - lib/assets/images/women_profile_pic.jpg
-   - lib/assets/images/zero_waste_image_2.jpg
-   - lib/assets/images/men_profile_pic.jpg
    - lib/assets/images/qr_code.png
 
    - lib/assets/images/composting_task.jpg
@@ -114,9 +111,8 @@ flutter:
    - lib/assets/images/voucher.jpg
    - lib/assets/images/gardening.jpg
    - lib/assets/images/person.png
-   - lib/assets/images/chat.png
-   - lib/assets/images/search.png
-   - lib/assets/images/logo.png
+   - lib/assets/images/teamwork.jpg
+
 
    - lib/assets/images/google_sign_in.png
 
@@ -124,37 +120,19 @@ flutter:
 
 
 
-   - lib/assets/gif_icons/earth.gif
-   - lib/assets/gif_icons/mother-earth-day.gif
-   - lib/assets/gif_icons/history.gif
-   - lib/assets/gif_icons/list.gif
-   - lib/assets/gif_icons/money-bag.gif
-   - lib/assets/gif_icons/high_five.gif
-   - lib/assets/gif_icons/coupon.gif
 
-   - lib/assets/gif_icons/composting.gif
+
    - lib/assets/gif_icons/shopping_bag.gif
-   - lib/assets/gif_icons/charity.gif
-   - lib/assets/gif_icons/mini-car.gif
-   - lib/assets/gif_icons/water.gif
-   - lib/assets/gif_icons/train.gif
+
    - lib/assets/gif_icons/meal_plan.gif
    - lib/assets/gif_icons/bottle.gif
-   - lib/assets/gif_icons/plant.gif
-   - lib/assets/gif_icons/cleaning.gif
+
    - lib/assets/gif_icons/coffee-cup.gif
    - lib/assets/gif_icons/clapperboard.gif
    - lib/assets/gif_icons/basket.gif
    - lib/assets/gif_icons/10-percent.gif
    - lib/assets/gif_icons/tick.gif
-   - lib/assets/gif_icons/search_icon.gif
-   - lib/assets/gif_icons/image_icon.gif
-   - lib/assets/gif_icons/caption_icon.gif
-   - lib/assets/gif_icons/camera_flash_icon.gif
-   - lib/assets/gif_icons/chatbot_icon.gif
-   - lib/assets/gif_icons/earth_banner_icon.gif
-   - lib/assets/gif_icons/edit_profile_icon.gif
-   - lib/assets/gif_icons/log_out_icon.gif
+
    - lib/assets/gif_icons/organic_splash.gif
 
 

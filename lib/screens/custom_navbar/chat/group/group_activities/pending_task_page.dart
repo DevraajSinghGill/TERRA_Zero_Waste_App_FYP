@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:confetti/confetti.dart';
@@ -8,18 +9,49 @@ import 'task_group_provider.dart';
 class PendingTasksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<TaskProvider>(
-      builder: (context, taskProvider, child) {
-        final tasks = taskProvider.pendingTasks;
-        return ListView.builder(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            final task = tasks[index];
-            return TaskCard(task: task);
+    return Scaffold(
+      body: Container(
+        color: Colors.white, // Set background color to white
+        child: Consumer<TaskProvider>(
+          builder: (context, taskProvider, child) {
+            final tasks = taskProvider.pendingTasks;
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Image.network(
+                          'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/pending_task.gif?alt=media&token=fdd5bd7e-a8a5-4d90-a80c-197035a28399',
+                          height: 150, // Adjusted the height to make it bigger
+                        ),
+                        SizedBox(height: 16.0),
+                        Text(
+                          'Here are your pending tasks. Complete them to earn points and contribute to your group\'s progress!',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14.sp),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      final task = tasks[index];
+                      return TaskCard(task: task);
+                    },
+                  ),
+                ],
+              ),
+            );
           },
-        );
-      },
+        ),
+      ),
     );
   }
 }

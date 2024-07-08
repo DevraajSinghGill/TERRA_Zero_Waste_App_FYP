@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/task_group.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/task_group_provider.dart';
+import 'package:terra_zero_waste_app/constants/app_colors.dart';
+import 'package:terra_zero_waste_app/widgets/text_inputs.dart';
 
 class CreateTaskPage extends StatefulWidget {
   final String groupId;
@@ -17,7 +20,6 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _pointsController = TextEditingController();
-  List<String> _images = [];
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -29,84 +31,68 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
         ),
       ),
-      body: Padding(
+      body: Container(
+        color: Colors.white, // Set background color to white
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                TextFormField(
+                Image.network(
+                  'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/create_task.gif?alt=media&token=fef3fa40-cc9c-4c2c-8833-3a1e3f0584a6',
+                  height: 150, // Adjusted the height to make it bigger
+                ),
+                SizedBox(height: 16.0),
+                Text(
+                  'Create a new task for your group. Fill in the title, description, and points for this task.',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.nunitoMedium.copyWith(fontSize: 14.sp),
+                ),
+                SizedBox(height: 16.0),
+                CustomTextInput(
                   controller: _titleController,
-                  decoration: InputDecoration(labelText: 'Title'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a title';
-                    }
-                    return null;
-                  },
+                  hintText: 'Title',
                 ),
-                TextFormField(
+                SizedBox(height: 16.0),
+                CustomTextInput(
                   controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    return null;
-                  },
+                  hintText: 'Description',
+                  maxLines: 3,
                 ),
-                TextFormField(
+                SizedBox(height: 16.0),
+                CustomTextInput(
                   controller: _pointsController,
-                  decoration: InputDecoration(labelText: 'Points'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter points';
-                    }
-                    return null;
-                  },
+                  hintText: 'Points',
+                  inputType: TextInputType.number,
                 ),
                 SizedBox(height: 16.0),
-                Text('Add Images'),
-                _images.isEmpty
-                    ? Icon(Icons.image, size: 100, color: Colors.grey)
-                    : Wrap(
-                        spacing: 8.0,
-                        children: _images
-                            .map((image) =>
-                                Image.network(image, width: 100, height: 100))
-                            .toList(),
-                      ),
-                SizedBox(height: 16.0),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    setState(() {
-                      _images.add('https://via.placeholder.com/150');
-                    });
-                  },
-                  icon: Icon(Icons.add_photo_alternate),
-                  label: Text('Add Image'),
-                ),
-                SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      final task = Task(
-                        title: _titleController.text,
-                        description: _descriptionController.text,
-                        points: int.parse(_pointsController.text),
-                        images: _images,
-                      );
-                      Provider.of<TaskProvider>(context, listen: false)
-                          .addTask(task);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Task Created')));
-                      Navigator.pop(context); // Go back after creating task
-                    }
-                  },
-                  child: Text('Confirm'),
+                Center(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        final task = Task(
+                          title: _titleController.text,
+                          description: _descriptionController.text,
+                          points: int.parse(_pointsController.text),
+                          images: [], // Assuming you still need to pass an empty list for images
+                        );
+                        Provider.of<TaskProvider>(context, listen: false)
+                            .addTask(task);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Task Created')));
+                        Navigator.pop(context); // Go back after creating task
+                      }
+                    },
+                    icon: Icon(Icons.done, color: Colors.white),
+                    label: Text('Confirm Task', style: AppTextStyles.nunitoBold.copyWith(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[900], // Set button color to green
+                      minimumSize: Size(double.infinity, 50), // Make button full width
+                      textStyle: TextStyle(fontSize: 18),
+                    ),
+                  ),
                 ),
               ],
             ),

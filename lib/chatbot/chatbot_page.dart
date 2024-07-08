@@ -71,14 +71,40 @@ class _HomePageState extends State<ChatbotPage> {
         Container(
           color: Colors.white, // Set background color to white
           child: DashChat(
-            inputOptions: InputOptions(trailing: [
-              IconButton(
-                onPressed: _sendMediaMessage,
-                icon: const Icon(
-                  Icons.image,
+            inputOptions: InputOptions(
+              trailing: [
+                IconButton(
+                  onPressed: _sendMediaMessage,
+                  icon: const Icon(
+                    Icons.image,
+                  ),
+                  iconSize: 30, // Increase the size of the icon
                 ),
-              )
-            ]),
+              ],
+              inputDecoration: InputDecoration(
+                hintText: 'Type your message here...',
+                hintStyle: AppTextStyles.nunitoRegular.copyWith(fontSize: 14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20), 
+                  borderSide: BorderSide(
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20), 
+                  borderSide: BorderSide(
+                    color: Colors.blue,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              ),
+            ),
             currentUser: currentUser,
             onSend: _sendMessage,
             messages: messages,

@@ -30,7 +30,7 @@ class _UserChatListScreenState extends State<UserChatListScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: Column(
           children: [
-            SizedBox(height: 20), // Add space between the top and search bar
+            SizedBox(height: 20), 
             SearchTextInput(
               controller: _searchController,
               onChange: (v) {
@@ -46,7 +46,7 @@ class _UserChatListScreenState extends State<UserChatListScreen> {
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[800],
-                    padding: EdgeInsets.symmetric(vertical: 15), // Make the button bigger
+                    padding: EdgeInsets.symmetric(vertical: 15), 
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -54,7 +54,7 @@ class _UserChatListScreenState extends State<UserChatListScreen> {
                   onPressed: () {
                     Get.to(() => AddingMembersToGroup());
                   },
-                  icon: Icon(Icons.group_add, color: AppColors.primaryWhite, size: 24), // Increase icon size
+                  icon: Icon(Icons.group_add, color: AppColors.primaryWhite, size: 24), 
                   label: Text(
                     "Make a Group Chat",
                     style: AppTextStyles.nunitoSemiBod.copyWith(

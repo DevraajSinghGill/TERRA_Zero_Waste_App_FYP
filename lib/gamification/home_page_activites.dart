@@ -20,9 +20,9 @@ class HomePageActivities extends StatelessWidget {
       );
     }
 
-    return StreamBuilder<DocumentSnapshot>(
-      stream: _firestore.collection('users').doc(user.uid).snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+    return FutureBuilder<int>(
+      future: _getCombinedPoints(user.uid),
+      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildScaffoldWithAppBar(
             context,
@@ -35,36 +35,39 @@ class HomePageActivities extends StatelessWidget {
             'Home TERRA Activities',
             body: Center(child: Text("Error: ${snapshot.error}")),
           );
-        } else if (snapshot.hasData && snapshot.data!.exists) {
-          Map<String, dynamic> userData =
-              snapshot.data?.data() as Map<String, dynamic>;
-          String formattedName = _formatName(userData['username'] ?? '');
-          int totalPoints = userData['totalPoints'] ?? 0;
+        } else if (snapshot.hasData) {
+          int combinedPoints = snapshot.data ?? 0;
 
-          // Fetch and combine group points
-          return FutureBuilder<int>(
-            future: _getGroupPoints(userData['groupId']),
-            builder: (context, groupPointsSnapshot) {
-              if (groupPointsSnapshot.connectionState == ConnectionState.waiting) {
+          return StreamBuilder<DocumentSnapshot>(
+            stream: _firestore.collection('users').doc(user.uid).snapshots(),
+            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+              if (userSnapshot.connectionState == ConnectionState.waiting) {
                 return _buildScaffoldWithAppBar(
                   context,
                   'Home TERRA Activities',
                   body: Center(child: CircularProgressIndicator()),
                 );
-              } else if (groupPointsSnapshot.hasError) {
+              } else if (userSnapshot.hasError) {
                 return _buildScaffoldWithAppBar(
                   context,
                   'Home TERRA Activities',
-                  body: Center(child: Text("Error: ${groupPointsSnapshot.error}")),
+                  body: Center(child: Text("Error: ${userSnapshot.error}")),
                 );
-              } else {
-                int groupPoints = groupPointsSnapshot.data ?? 0;
-                int combinedPoints = totalPoints + groupPoints;
+              } else if (userSnapshot.hasData && userSnapshot.data!.exists) {
+                Map<String, dynamic> userData =
+                    userSnapshot.data?.data() as Map<String, dynamic>;
+                String formattedName = _formatName(userData['username'] ?? '');
 
                 return _buildScaffoldWithAppBar(
                   context,
                   'TERRA Activities',
                   body: _buildUserInterface(context, formattedName, combinedPoints),
+                );
+              } else {
+                return _buildScaffoldWithAppBar(
+                  context,
+                  'TERRA Activities',
+                  body: Center(child: Text("No user data available")),
                 );
               }
             },
@@ -73,11 +76,34 @@ class HomePageActivities extends StatelessWidget {
           return _buildScaffoldWithAppBar(
             context,
             'TERRA Activities',
-            body: Center(child: Text("No user data available")),
+            body: Center(child: Text("No points data available")),
           );
         }
       },
     );
+  }
+
+  Future<int> _getCombinedPoints(String userId) async {
+    int totalPoints = 0;
+    int taskPoints = 0;
+
+    try {
+      DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        totalPoints = (userDoc.data() as Map<String, dynamic>)['totalPoints']?.toInt() ?? 0;
+      }
+
+      QuerySnapshot taskSnapshot = await _firestore.collection('tasks').get();
+      for (QueryDocumentSnapshot doc in taskSnapshot.docs) {
+        Map<String, dynamic> taskData = doc.data() as Map<String, dynamic>;
+        taskPoints += (taskData['points'] ?? 0) as int;
+      }
+
+      return totalPoints + taskPoints;
+    } catch (e) {
+      print('Error fetching combined points: $e');
+      return 0;
+    }
   }
 
   Scaffold _buildScaffoldWithAppBar(BuildContext context, String title,
@@ -456,35 +482,6 @@ class HomePageActivities extends StatelessWidget {
     } catch (e) {
       print('Error loading GIF icon: $e');
       return '';
-    }
-  }
-
-  Future<int> _getGroupPoints(String? groupId) async {
-    if (groupId == null) {
-      return 0;
-    }
-    try {
-      DocumentSnapshot groupDoc = await _firestore.collection('groups').doc(groupId).get();
-      if (groupDoc.exists) {
-        Map<String, dynamic> groupData = groupDoc.data() as Map<String, dynamic>;
-        List<String> memberIds = List<String>.from(groupData['memberIds'] ?? []);
-
-        int totalGroupPoints = 0;
-        for (String memberId in memberIds) {
-          DocumentSnapshot memberDoc = await _firestore.collection('users').doc(memberId).get();
-          if (memberDoc.exists) {
-            Map<String, dynamic> memberData = memberDoc.data() as Map<String, dynamic>;
-            totalGroupPoints += (memberData['totalPoints'] ?? 0) as int;  // Explicitly cast to int
-          }
-        }
-
-        return totalGroupPoints;
-      } else {
-        return 0;
-      }
-    } catch (e) {
-      print('Error fetching group points: $e');
-      return 0;
     }
   }
 }

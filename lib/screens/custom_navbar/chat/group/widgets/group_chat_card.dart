@@ -28,7 +28,7 @@ class GroupChatCard extends StatelessWidget {
                 ),
           title: Text(
             group.groupName,
-            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp), // Adjust font size here
+            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp), 
           ),
           onTap: () {
             Navigator.push(

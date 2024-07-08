@@ -36,7 +36,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           IconButton(
             icon: Icon(
               Icons.group_rounded,
-              size: 30.0, // Adjust the size here
+              size: 30.0, 
             ),
             onPressed: () {
               Navigator.push(

@@ -90,14 +90,14 @@ class CustomDrawerWidget extends StatelessWidget {
                     },
                   ),
                   CustomListTile(
-                    iconPath: 'chatbot_icon.gif', // Replace with your file path in Firebase Storage
+                    iconPath: 'chatbot_icon.gif', 
                     title: "TERRA Chatbot",
                     onPressed: () {
                       Get.to(() => ChatbotPage());
                     },
                   ),
                   CustomListTile(
-                    iconPath: 'earth_banner_icon.gif', // Replace with your file path in Firebase Storage
+                    iconPath: 'earth_banner_icon.gif', 
                     title: "TERRA Activities",
                     onPressed: () {
                       Get.to(() => HomePageActivities());
@@ -106,7 +106,7 @@ class CustomDrawerWidget extends StatelessWidget {
                   SizedBox(height: 180.h), // Added space here
                   Divider(color: Colors.grey[300]),
                   CustomListTile(
-                    iconPath: 'log_out_icon.gif', // Replace with your file path in Firebase Storage
+                    iconPath: 'log_out_icon.gif', 
                     title: "LogOut",
                     onPressed: () {
                       showCustomAlertDialog(

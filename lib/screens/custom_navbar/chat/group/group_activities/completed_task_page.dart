@@ -48,7 +48,7 @@ class CompletedTasksPage extends StatelessWidget {
                           constraints: BoxConstraints(minHeight: 180), // Increased the minimum height for the container
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage('lib/assets/images/teamwork.jpg'),
+                              image: NetworkImage('https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/teamwork.jpg?alt=media&token=5a41f53d-ed06-4fc1-b9e8-0c1f990dc593'),
                               fit: BoxFit.cover,
                             ),
                             borderRadius: BorderRadius.circular(15),

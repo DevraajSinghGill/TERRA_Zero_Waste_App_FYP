@@ -49,83 +49,86 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   Widget build(BuildContext context) {
     final imageController = Provider.of<ImageController>(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20.h), // Add space before the "Select Image" text
-            Row(
-              children: [
-                _imageIconUrl != null
-                    ? Image.network(
-                        _imageIconUrl!,
-                        height: 50.h,
-                        width: 50.w,
-                      )
-                    : CircularProgressIndicator(),
-                SizedBox(width: 10.w),
-                Text("Select Image", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
-              ],
-            ),
-            SizedBox(height: 5.h), // Add space before the description text
-            Text(
-              "Choose an image from your gallery or take a new one.",
-              style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12, color: Colors.grey[900]),
-            ),
-            SizedBox(height: 10.h),
-            AddImages(),
-            SizedBox(height: 20.h),
-            Row(
-              children: [
-                _captionIconUrl != null
-                    ? Image.network(
-                        _captionIconUrl!,
-                        height: 50.h,
-                        width: 50.w,
-                      )
-                    : CircularProgressIndicator(),
-                SizedBox(width: 10.w),
-                Text("Add Caption", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
-              ],
-            ),
-            SizedBox(height: 5.h), // Add space before the description text
-            Text(
-              "Write a caption for your post.",
-              style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12, color: Colors.grey[900]),
-            ),
-            SizedBox(height: 10.h),
-            CustomTextInput(
-              controller: AppTextController.postCaptionController,
-              hintText: "Enter your caption...",
-              maxLines: 3,
-            ),
-            SizedBox(height: 50.h),
-            Consumer<LoadingController>(builder: (context, loadingController, child) {
-              return loadingController.isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(color: AppColors.primaryColor),
-                    )
-                  : PrimaryButton(
-                      title: "Upload",
-                      onPressed: () {
-                        PostServices()
-                            .uploadPost(
-                          context: context,
-                          caption: AppTextController.postCaptionController.text,
-                          images: imageController.imageList,
+    return Scaffold(
+      backgroundColor: Colors.white, // Set the background color to white
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20.h), // Add space before the "Select Image" text
+              Row(
+                children: [
+                  _imageIconUrl != null
+                      ? Image.network(
+                          _imageIconUrl!,
+                          height: 50.h,
+                          width: 50.w,
                         )
-                            .then((e) {
-                          AppTextController().clearTextInput();
-                          setState(() {
-                            imageController.imageList!.clear();
+                      : CircularProgressIndicator(),
+                  SizedBox(width: 10.w),
+                  Text("Select Image", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
+                ],
+              ),
+              SizedBox(height: 5.h), // Add space before the description text
+              Text(
+                "Choose an image from your gallery or take a new one.",
+                style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12, color: Colors.grey[900]),
+              ),
+              SizedBox(height: 10.h),
+              AddImages(),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  _captionIconUrl != null
+                      ? Image.network(
+                          _captionIconUrl!,
+                          height: 50.h,
+                          width: 50.w,
+                        )
+                      : CircularProgressIndicator(),
+                  SizedBox(width: 10.w),
+                  Text("Add Caption", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
+                ],
+              ),
+              SizedBox(height: 5.h), // Add space before the description text
+              Text(
+                "Write a caption for your post.",
+                style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12, color: Colors.grey[900]),
+              ),
+              SizedBox(height: 10.h),
+              CustomTextInput(
+                controller: AppTextController.postCaptionController,
+                hintText: "Enter your caption...",
+                maxLines: 3,
+              ),
+              SizedBox(height: 50.h),
+              Consumer<LoadingController>(builder: (context, loadingController, child) {
+                return loadingController.isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(color: AppColors.primaryColor),
+                      )
+                    : PrimaryButton(
+                        title: "Upload",
+                        onPressed: () {
+                          PostServices()
+                              .uploadPost(
+                            context: context,
+                            caption: AppTextController.postCaptionController.text,
+                            images: imageController.imageList,
+                          )
+                              .then((e) {
+                            AppTextController().clearTextInput();
+                            setState(() {
+                              imageController.imageList!.clear();
+                            });
                           });
-                        });
-                      },
-                    );
-            })
-          ],
+                        },
+                      );
+              })
+            ],
+          ),
         ),
       ),
     );

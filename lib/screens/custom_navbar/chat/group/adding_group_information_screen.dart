@@ -30,7 +30,10 @@ class _AddingGroupInformationScreenState extends State<AddingGroupInformationScr
     final imageController = Provider.of<ImageController>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Group Information"),
+        title: Text(
+          "Add Group Information",
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 20), // Custom font style for AppBar
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

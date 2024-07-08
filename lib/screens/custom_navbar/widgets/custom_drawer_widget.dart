@@ -103,7 +103,7 @@ class CustomDrawerWidget extends StatelessWidget {
                       Get.to(() => HomePageActivities());
                     },
                   ),
-                  SizedBox(height: 200.h), // Added space here
+                  SizedBox(height: 180.h), // Added space here
                   Divider(color: Colors.grey[300]),
                   CustomListTile(
                     iconPath: 'log_out_icon.gif', // Replace with your file path in Firebase Storage

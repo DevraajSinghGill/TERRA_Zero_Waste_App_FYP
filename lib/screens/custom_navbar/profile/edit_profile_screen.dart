@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,8 @@ import 'package:terra_zero_waste_app/models/user_model.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/profile/widgets/profile_image_portion.dart';
 import 'package:terra_zero_waste_app/services/user_profile_services.dart';
 import 'package:terra_zero_waste_app/widgets/buttons.dart';
-import 'package:terra_zero_waste_app/widgets/text_inputs.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 
 import '../../../controllers/image_controller.dart';
 
@@ -47,19 +49,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20.h), 
+              SizedBox(height: 20.h),
               ProfileImagePortion(userModel: widget.userModel),
               SizedBox(height: 30),
               Text("UserName", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16, color: AppColors.primaryBlack)),
               SizedBox(height: 5),
-              CustomTextInput(
+              _buildCustomTextInput(
+                context,
                 controller: AppTextController.usernameController,
                 hintText: widget.userModel.username,
               ),
               SizedBox(height: 20),
               Text("About", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16, color: AppColors.primaryBlack)),
               SizedBox(height: 5),
-              CustomTextInput(
+              _buildCustomTextInput(
+                context,
                 controller: AppTextController.aboutController,
                 hintText: widget.userModel.about,
                 maxLines: 3,
@@ -94,6 +98,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCustomTextInput(
+    BuildContext context, {
+    required TextEditingController controller,
+    required String hintText,
+    int maxLines = 1,
+  }) {
+    return Container(
+      width: Get.width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: AppColors.primaryWhite,
+        border: Border.all(
+          color: AppColors.primaryBlack.withOpacity(0.5),
+        ),
+      ),
+      child: TextField(
+        keyboardType: TextInputType.text,
+        maxLines: maxLines,
+        controller: controller,
+        style: GoogleFonts.nunito(
+          textStyle: TextStyle(color: AppColors.primaryBlack),
+        ),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
+          border: InputBorder.none,
+          hintText: hintText,
+          hintStyle: GoogleFonts.nunito(
+            textStyle: TextStyle(color: AppColors.primaryBlack.withOpacity(0.5)),
+          ),
+        ),
+        textAlignVertical: TextAlignVertical.center,
       ),
     );
   }

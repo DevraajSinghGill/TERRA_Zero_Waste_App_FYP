@@ -26,30 +26,46 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (_) {
-              return StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-                  return Container(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (_) {
+            return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return FractionallySizedBox(
+                  heightFactor: 0.75,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    color: Colors.white, // Set background color to white
                     child: Column(
                       children: [
-                        Text("Send Post", style: AppTextStyles.nunitoBold),
-                        SizedBox(height: 10.h),
-                        StreamBuilder(
-                          stream: ChatStream().combineChatStreamForPost(),
-                          builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-                            if (!snapshot.hasData) {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            var chats = snapshot.data;
-                            return ListView.builder(
+                        SizedBox(height: 20.h),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.network('https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/message_icon.gif?alt=media&token=86587cfb-ca20-4cde-ba73-d0b16a4404cb', width: 50.w, height: 50.h),
+                            SizedBox(width: 16),
+                            Text(
+                              "Send Post",
+                              style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp, color: Colors.green),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20.h),
+                        Expanded(
+                          child: StreamBuilder(
+                            stream: ChatStream().combineChatStreamForPost(),
+                            builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+                              if (!snapshot.hasData) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              var chats = snapshot.data;
+                              return ListView.builder(
                                 itemCount: chats!.length,
                                 padding: EdgeInsets.zero,
-                                shrinkWrap: true,
                                 itemBuilder: (BuildContext context, int index) {
                                   var chat = chats[index];
 
@@ -91,8 +107,14 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
                                                       radius: 25,
                                                       backgroundImage: NetworkImage(userModel.image),
                                                     ),
-                                              title: Text(userModel.username),
-                                              subtitle: Text(DateFormat('dd-MM-yyyy').format(userModel.memberSince)),
+                                              title: Text(
+                                                userModel.username,
+                                                style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp),
+                                              ),
+                                              subtitle: Text(
+                                                DateFormat('dd-MM-yyyy').format(userModel.memberSince),
+                                                style: AppTextStyles.nunitoRegular.copyWith(fontSize: 10.sp),
+                                              ),
                                               trailing: isLoading
                                                   ? CircularProgressIndicator()
                                                   : TextButton(
@@ -115,8 +137,8 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
                                                       },
                                                       child: Text(
                                                         "Send Post",
-                                                        style: TextStyle(
-                                                          fontSize: 12,
+                                                        style: AppTextStyles.nunitoBold.copyWith(
+                                                          fontSize: 10.sp,
                                                           color: AppColors.primaryBlack,
                                                         ),
                                                       ),
@@ -124,7 +146,7 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
                                                         shape: RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(5),
                                                         ),
-                                                        backgroundColor: Colors.grey,
+                                                        backgroundColor: Colors.green,
                                                       ),
                                                     ),
                                             ),
@@ -148,8 +170,14 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
                                                   radius: 25,
                                                   backgroundImage: NetworkImage(group.groupImage),
                                                 ),
-                                          title: Text(group.groupName),
-                                          subtitle: Text(DateFormat('dd-MM-yyyy').format(group.createdAt)),
+                                          title: Text(
+                                            group.groupName,
+                                            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp),
+                                          ),
+                                          subtitle: Text(
+                                            DateFormat('dd-MM-yyyy').format(group.createdAt),
+                                            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 10.sp),
+                                          ),
                                           trailing: isLoading
                                               ? CircularProgressIndicator()
                                               : TextButton(
@@ -171,8 +199,8 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
                                                   },
                                                   child: Text(
                                                     "Send Post",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
+                                                    style: AppTextStyles.nunitoBold.copyWith(
+                                                      fontSize: 10.sp,
                                                       color: AppColors.primaryBlack,
                                                     ),
                                                   ),
@@ -180,7 +208,7 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius: BorderRadius.circular(5),
                                                     ),
-                                                    backgroundColor: Colors.grey,
+                                                    backgroundColor: Colors.green,
                                                   ),
                                                 ),
                                         ),
@@ -190,17 +218,21 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
                                   } else {
                                     return SizedBox();
                                   }
-                                });
-                          },
+                                },
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),
-                  );
-                },
-              );
-            },
-          );
-        },
-        child: Icon(Icons.share));
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+      child: Icon(Icons.share),
+    );
   }
 }

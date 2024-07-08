@@ -57,7 +57,7 @@ class GroupChatPortion extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   groupChatModel.username[0].toUpperCase(),
-                                  style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 16.sp, color: AppColors.primaryColor),
+                                  style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 14.sp, color: AppColors.primaryColor),
                                 ),
                               ),
                             )
@@ -84,11 +84,11 @@ class GroupChatPortion extends StatelessWidget {
                               children: [
                                 Text(
                                   groupChatModel.username,
-                                  style: AppTextStyles.nunitoSemiBod,
+                                  style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp),
                                 ),
                                 Text(
                                   timeago.format(groupChatModel.sendingTime),
-                                  style: AppTextStyles.rubikMedium.copyWith(color: Colors.grey.shade900),
+                                  style: AppTextStyles.rubikMedium.copyWith(fontSize: 10.sp, color: Colors.grey.shade900),
                                 ),
                               ],
                             ),
@@ -126,7 +126,7 @@ class GroupChatPortion extends StatelessWidget {
                                         children: [
                                           Text(
                                             postModel.caption,
-                                            style: AppTextStyles.rubikMedium.copyWith(fontSize: 12.sp),
+                                            style: AppTextStyles.rubikMedium.copyWith(fontSize: 10.sp),
                                           ),
                                           SizedBox(height: 5),
                                           SizedBox(
@@ -139,7 +139,7 @@ class GroupChatPortion extends StatelessWidget {
                                     );
                                   })
                             else
-                              Text(groupChatModel.msg, style: AppTextStyles.nunitoRegular),
+                              Text(groupChatModel.msg, style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp)),
                           ],
                         ),
                       ),

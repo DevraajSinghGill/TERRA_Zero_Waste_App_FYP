@@ -40,10 +40,34 @@ class HomePageActivities extends StatelessWidget {
               snapshot.data?.data() as Map<String, dynamic>;
           String formattedName = _formatName(userData['username'] ?? '');
           int totalPoints = userData['totalPoints'] ?? 0;
-          return _buildScaffoldWithAppBar(
-            context,
-            'TERRA Activities',
-            body: _buildUserInterface(context, formattedName, totalPoints),
+
+          // Fetch and combine group points
+          return FutureBuilder<int>(
+            future: _getGroupPoints(userData['groupId']),
+            builder: (context, groupPointsSnapshot) {
+              if (groupPointsSnapshot.connectionState == ConnectionState.waiting) {
+                return _buildScaffoldWithAppBar(
+                  context,
+                  'Home TERRA Activities',
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              } else if (groupPointsSnapshot.hasError) {
+                return _buildScaffoldWithAppBar(
+                  context,
+                  'Home TERRA Activities',
+                  body: Center(child: Text("Error: ${groupPointsSnapshot.error}")),
+                );
+              } else {
+                int groupPoints = groupPointsSnapshot.data ?? 0;
+                int combinedPoints = totalPoints + groupPoints;
+
+                return _buildScaffoldWithAppBar(
+                  context,
+                  'TERRA Activities',
+                  body: _buildUserInterface(context, formattedName, combinedPoints),
+                );
+              }
+            },
           );
         } else {
           return _buildScaffoldWithAppBar(
@@ -80,7 +104,7 @@ class HomePageActivities extends StatelessWidget {
   }
 
   Widget _buildUserInterface(
-      BuildContext context, String formattedName, int totalPoints) {
+      BuildContext context, String formattedName, int combinedPoints) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -89,7 +113,7 @@ class HomePageActivities extends StatelessWidget {
           SizedBox(height: 10),
           _buildWelcomeSection(formattedName),
           SizedBox(height: 10),
-          _buildPointsSection(totalPoints),
+          _buildPointsSection(combinedPoints),
           SizedBox(height: 20),
           _buildOptionCard(
             context,
@@ -113,13 +137,13 @@ class HomePageActivities extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => TotalPointsPage(
-                        totalPoints: totalPoints,
+                        totalPoints: combinedPoints,
                         userId: _auth.currentUser!.uid))),
             Colors.green[800]!,
             Colors.green[900]!,
           ),
           SizedBox(height: 20),
-          _buildRedeemSection(context, totalPoints),
+          _buildRedeemSection(context, combinedPoints),
         ],
       ),
     );
@@ -128,7 +152,7 @@ class HomePageActivities extends StatelessWidget {
   String _formatName(String fullName) {
     return fullName
         .split(' ')
-        .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .map((word) => word.isNotEmpty ? word[0].toUpperCase() + word.substring(1).toLowerCase() : '')
         .join(' ');
   }
 
@@ -164,7 +188,7 @@ class HomePageActivities extends StatelessWidget {
                   Container(
                     width: 50,
                     height: 50,
-                    child: Image.network(snapshot.data!, fit: BoxFit.cover),
+                    child: Image.network(snapshot.data ?? '', fit: BoxFit.cover),
                   ),
                 ],
               ),
@@ -182,7 +206,7 @@ class HomePageActivities extends StatelessWidget {
     );
   }
 
-  Widget _buildPointsSection(int totalPoints) {
+  Widget _buildPointsSection(int combinedPoints) {
     return FutureBuilder<String>(
       future: _getGifUrl('money-bag.gif'), // Firebase Storage path
       builder: (context, snapshot) {
@@ -197,7 +221,7 @@ class HomePageActivities extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildIconContainer(snapshot.data!, 50.0),
+                _buildIconContainer(snapshot.data ?? '', 50.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -211,7 +235,7 @@ class HomePageActivities extends StatelessWidget {
                               color: Colors.green[900]),
                           children: <TextSpan>[
                             TextSpan(
-                              text: '$totalPoints',
+                              text: '$combinedPoints',
                               style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 14,
@@ -245,7 +269,7 @@ class HomePageActivities extends StatelessWidget {
     );
   }
 
-  Widget _buildRedeemSection(BuildContext context, int totalPoints) {
+  Widget _buildRedeemSection(BuildContext context, int combinedPoints) {
     return FutureBuilder<String>(
       future: _getGifUrl('coupon.gif'), // Firebase Storage path
       builder: (context, snapshot) {
@@ -263,7 +287,7 @@ class HomePageActivities extends StatelessWidget {
             ),
             child: Column(
               children: [
-                _buildIconContainer(snapshot.data!, 70.0),
+                _buildIconContainer(snapshot.data ?? '', 70.0),
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
@@ -272,7 +296,7 @@ class HomePageActivities extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => RedeemVoucherPage(
                                 userId: _auth.currentUser!.uid,
-                                initialPoints: totalPoints)));
+                                initialPoints: combinedPoints)));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
@@ -354,7 +378,7 @@ class HomePageActivities extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        _buildIconContainer(snapshot.data!, 50.0),
+                        _buildIconContainer(snapshot.data ?? '', 50.0),
                         SizedBox(width: 20),
                         Expanded(
                           child: Text(title,
@@ -432,6 +456,35 @@ class HomePageActivities extends StatelessWidget {
     } catch (e) {
       print('Error loading GIF icon: $e');
       return '';
+    }
+  }
+
+  Future<int> _getGroupPoints(String? groupId) async {
+    if (groupId == null) {
+      return 0;
+    }
+    try {
+      DocumentSnapshot groupDoc = await _firestore.collection('groups').doc(groupId).get();
+      if (groupDoc.exists) {
+        Map<String, dynamic> groupData = groupDoc.data() as Map<String, dynamic>;
+        List<String> memberIds = List<String>.from(groupData['memberIds'] ?? []);
+
+        int totalGroupPoints = 0;
+        for (String memberId in memberIds) {
+          DocumentSnapshot memberDoc = await _firestore.collection('users').doc(memberId).get();
+          if (memberDoc.exists) {
+            Map<String, dynamic> memberData = memberDoc.data() as Map<String, dynamic>;
+            totalGroupPoints += (memberData['totalPoints'] ?? 0) as int;  // Explicitly cast to int
+          }
+        }
+
+        return totalGroupPoints;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      print('Error fetching group points: $e');
+      return 0;
     }
   }
 }

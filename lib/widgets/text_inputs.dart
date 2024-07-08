@@ -3,11 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/controllers/loading_controller.dart';
 import 'package:terra_zero_waste_app/widgets/show_options_for_image_picking.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/app_colors.dart';
 import '../controllers/image_controller.dart';
+
 
 class CustomTextInput extends StatelessWidget {
   final String? hintText;
@@ -40,6 +43,7 @@ class CustomTextInput extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
           border: InputBorder.none,
           hintText: hintText,
+          hintStyle: AppTextStyles.nunitoRegular, 
           suffixIcon: suffixIcon,
         ),
         textAlignVertical: TextAlignVertical.center,
@@ -72,6 +76,7 @@ class SearchTextInput extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
           border: InputBorder.none,
           hintText: "Search here...",
+          hintStyle: AppTextStyles.nunitoRegular, // Apply custom hint text style
           prefixIcon: const Icon(Icons.search),
         ),
         textAlignVertical: TextAlignVertical.center,
@@ -109,7 +114,6 @@ class ChatInput extends StatelessWidget {
                     },
                     onGalleryClicked: () {
                       Get.back();
-
                       imageController.pickImage(ImageSource.gallery);
                     },
                   );

@@ -43,9 +43,10 @@ class _UserChatListScreenState extends State<UserChatListScreen> {
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
               child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[800],
+                    padding: EdgeInsets.symmetric(vertical: 15), // Make the button bigger
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -53,7 +54,8 @@ class _UserChatListScreenState extends State<UserChatListScreen> {
                   onPressed: () {
                     Get.to(() => AddingMembersToGroup());
                   },
-                  child: Text(
+                  icon: Icon(Icons.group_add, color: AppColors.primaryWhite, size: 24), // Increase icon size
+                  label: Text(
                     "Make a Group Chat",
                     style: AppTextStyles.nunitoSemiBod.copyWith(
                       fontSize: 18,
@@ -63,6 +65,7 @@ class _UserChatListScreenState extends State<UserChatListScreen> {
                 ),
               ),
             ),
+            SizedBox(height: 10), // Add space between the button and the chats
             Expanded(
               child: StreamBuilder(
                 stream: ChatStream().combineChatStreams(),

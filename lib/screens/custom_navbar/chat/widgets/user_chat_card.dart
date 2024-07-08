@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-
 import '../../../../constants/app_colors.dart';
 import '../../../../models/user_model.dart';
 import '../chat_main_screen.dart';
@@ -41,19 +40,20 @@ class UserChatCard extends StatelessWidget {
                 ),
           title: Text(
             userModel.username,
-            style: AppTextStyles.nunitoSemiBod,
+            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp), // Adjust font size here
           ),
           subtitle: Text(
             data['msg'],
             style: AppTextStyles.nunitoRegular.copyWith(
               color: AppColors.primaryGrey,
+              fontSize: 12.sp,
             ),
           ),
           trailing: Text(
             timeago.format(data['createdAt'].toDate()),
             style: AppTextStyles.nunitoRegular.copyWith(
               color: AppColors.primaryGrey,
-              fontSize: 12.sp,
+              fontSize: 10.sp,
             ),
           ),
         ),

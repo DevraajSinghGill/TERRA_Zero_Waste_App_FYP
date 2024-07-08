@@ -28,7 +28,7 @@ class GroupChatCard extends StatelessWidget {
                 ),
           title: Text(
             group.groupName,
-            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 16.sp),
+            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp), // Adjust font size here
           ),
           onTap: () {
             Navigator.push(
@@ -38,11 +38,11 @@ class GroupChatCard extends StatelessWidget {
           },
           subtitle: Text(
             group.lastMsg,
-            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14.sp, color: AppColors.primaryGrey),
+            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp, color: AppColors.primaryGrey),
           ),
           trailing: Text(
             timeago.format(group.lastMsgTime),
-            style: AppTextStyles.nunitoMedium.copyWith(fontSize: 12.sp, color: AppColors.primaryGrey),
+            style: AppTextStyles.nunitoMedium.copyWith(fontSize: 10.sp, color: AppColors.primaryGrey),
           ),
         ),
         Divider(height: 10),

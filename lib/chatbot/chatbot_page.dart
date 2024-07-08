@@ -78,7 +78,7 @@ class _HomePageState extends State<ChatbotPage> {
                   icon: const Icon(
                     Icons.image,
                   ),
-                  iconSize: 30, // Increase the size of the icon
+                  iconSize: 40, // Increase the size of the icon
                 ),
               ],
               inputDecoration: InputDecoration(
@@ -123,8 +123,8 @@ class _HomePageState extends State<ChatbotPage> {
           _gifIconUrl != null
               ? Image.network(
                   _gifIconUrl!,
-                  height: 100,
-                  width: 100,
+                  height: 150,
+                  width: 150,
                 )
               : CircularProgressIndicator(),
           SizedBox(height: 20),

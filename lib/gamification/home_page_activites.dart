@@ -20,43 +20,42 @@ class HomePageActivities extends StatelessWidget {
       );
     }
 
-    return FutureBuilder<int>(
-      future: _getCombinedPoints(user.uid),
-      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _firestore.collection('users').doc(user.uid).snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+        if (userSnapshot.connectionState == ConnectionState.waiting) {
           return _buildScaffoldWithAppBar(
             context,
             'Home TERRA Activities',
             body: Center(child: CircularProgressIndicator()),
           );
-        } else if (snapshot.hasError) {
+        } else if (userSnapshot.hasError) {
           return _buildScaffoldWithAppBar(
             context,
             'Home TERRA Activities',
-            body: Center(child: Text("Error: ${snapshot.error}")),
+            body: Center(child: Text("Error: ${userSnapshot.error}")),
           );
-        } else if (snapshot.hasData) {
-          int combinedPoints = snapshot.data ?? 0;
+        } else if (userSnapshot.hasData && userSnapshot.data!.exists) {
+          Map<String, dynamic> userData = userSnapshot.data?.data() as Map<String, dynamic>;
+          String formattedName = _formatName(userData['username'] ?? '');
 
-          return StreamBuilder<DocumentSnapshot>(
-            stream: _firestore.collection('users').doc(user.uid).snapshots(),
-            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
-              if (userSnapshot.connectionState == ConnectionState.waiting) {
+          return StreamBuilder<int>(
+            stream: _getCombinedPointsStream(user.uid),
+            builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return _buildScaffoldWithAppBar(
                   context,
                   'Home TERRA Activities',
                   body: Center(child: CircularProgressIndicator()),
                 );
-              } else if (userSnapshot.hasError) {
+              } else if (snapshot.hasError) {
                 return _buildScaffoldWithAppBar(
                   context,
                   'Home TERRA Activities',
-                  body: Center(child: Text("Error: ${userSnapshot.error}")),
+                  body: Center(child: Text("Error: ${snapshot.error}")),
                 );
-              } else if (userSnapshot.hasData && userSnapshot.data!.exists) {
-                Map<String, dynamic> userData =
-                    userSnapshot.data?.data() as Map<String, dynamic>;
-                String formattedName = _formatName(userData['username'] ?? '');
+              } else if (snapshot.hasData) {
+                int combinedPoints = snapshot.data ?? 0;
 
                 return _buildScaffoldWithAppBar(
                   context,
@@ -67,7 +66,7 @@ class HomePageActivities extends StatelessWidget {
                 return _buildScaffoldWithAppBar(
                   context,
                   'TERRA Activities',
-                  body: Center(child: Text("No user data available")),
+                  body: Center(child: Text("No points data available")),
                 );
               }
             },
@@ -76,33 +75,38 @@ class HomePageActivities extends StatelessWidget {
           return _buildScaffoldWithAppBar(
             context,
             'TERRA Activities',
-            body: Center(child: Text("No points data available")),
+            body: Center(child: Text("No user data available")),
           );
         }
       },
     );
   }
 
-  Future<int> _getCombinedPoints(String userId) async {
-    int totalPoints = 0;
-    int taskPoints = 0;
+  Stream<int> _getCombinedPointsStream(String userId) async* {
+    final userDocStream = _firestore.collection('users').doc(userId).snapshots();
+    final tasksStream = _firestore.collection('tasks').snapshots();
 
-    try {
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
-      if (userDoc.exists) {
-        totalPoints = (userDoc.data() as Map<String, dynamic>)['totalPoints']?.toInt() ?? 0;
+    await for (var userDocSnapshot in userDocStream) {
+      if (userDocSnapshot.exists) {
+        int totalPoints = (userDocSnapshot.data() as Map<String, dynamic>)['totalPoints']?.toInt() ?? 0;
+
+        await for (var tasksSnapshot in tasksStream) {
+          int taskPoints = 0;
+          for (var doc in tasksSnapshot.docs) {
+            Map<String, dynamic> taskData = doc.data() as Map<String, dynamic>;
+            taskPoints += (taskData['points'] ?? 0) as int;
+          }
+
+          int combinedPoints = totalPoints + taskPoints;
+
+          // Save the combined points back to Firestore
+          await _firestore.collection('users').doc(userId).update({'combinedPoints': combinedPoints});
+
+          yield combinedPoints;
+        }
+      } else {
+        yield 0;
       }
-
-      QuerySnapshot taskSnapshot = await _firestore.collection('tasks').get();
-      for (QueryDocumentSnapshot doc in taskSnapshot.docs) {
-        Map<String, dynamic> taskData = doc.data() as Map<String, dynamic>;
-        taskPoints += (taskData['points'] ?? 0) as int;
-      }
-
-      return totalPoints + taskPoints;
-    } catch (e) {
-      print('Error fetching combined points: $e');
-      return 0;
     }
   }
 
@@ -150,21 +154,6 @@ class HomePageActivities extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ZeroWasteActivities())),
-            Colors.green[800]!,
-            Colors.green[900]!,
-          ),
-          SizedBox(height: 20),
-          _buildOptionCard(
-            context,
-            'View Total Points',
-            'history.gif', // Firebase Storage path
-            'Review your accumulated points and completed tasks.',
-            () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TotalPointsPage(
-                        totalPoints: combinedPoints,
-                        userId: _auth.currentUser!.uid))),
             Colors.green[800]!,
             Colors.green[900]!,
           ),
@@ -244,48 +233,42 @@ class HomePageActivities extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.all(16.0),
             decoration: _buildBoxDecoration(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                _buildIconContainer(snapshot.data ?? '', 50.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          text: 'You have ',
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: Colors.green[900]),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: '$combinedPoints',
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: Color.fromARGB(255, 217, 25, 25)),
-                            ),
-                            TextSpan(
-                              text: ' points',
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: Colors.green[900]),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        'remaining',
+                _buildIconContainer(snapshot.data ?? '', 70.0),
+                SizedBox(height: 10),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: 'You have ',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18,
+                        color: Colors.green[900]),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: '$combinedPoints',
                         style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w500,
-                            fontSize: 10,
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 217, 25, 25)),
+                      ),
+                      TextSpan(
+                        text: ' points',
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
                             color: Colors.green[900]),
                       ),
                     ],
                   ),
+                ),
+                Text(
+                  'remaining',
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      color: Colors.green[900]),
                 ),
               ],
             ),
@@ -400,31 +383,21 @@ class HomePageActivities extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        _buildIconContainer(snapshot.data ?? '', 50.0),
-                        SizedBox(width: 20),
-                        Expanded(
-                          child: Text(title,
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                  color: Colors.white)),
-                        ),
-                        Icon(Icons.arrow_forward_ios,
-                            color: Colors.white, size: 20),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(description,
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              color: Colors.white70)),
-                    ),
+                    _buildIconContainer(snapshot.data ?? '', 70.0),
+                    SizedBox(height: 10),
+                    Text(title,
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            color: Colors.white)),
+                    SizedBox(height: 8),
+                    Text(description,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Colors.white70)),
                   ],
                 ),
               ),

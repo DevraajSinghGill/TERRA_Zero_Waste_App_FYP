@@ -99,6 +99,7 @@ class _AddingGroupInformationScreenState extends State<AddingGroupInformationScr
                             context: context,
                             title: _titleController.text,
                             description: _descriptionController.text,
+                            image: imageController.selectedImage,
                             userIds: widget.userIds,
                           )
                               .then((e) {

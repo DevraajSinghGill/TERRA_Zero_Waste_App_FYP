@@ -11,8 +11,7 @@ class TaskProvider with ChangeNotifier {
   List<Task> get pendingTasks => _pendingTasks;
   List<Task> get completedTasks => _completedTasks;
 
-  TaskProvider() {
-  }
+  TaskProvider() {}
 
   void setGroupId(String groupId) {
     _groupId = groupId;
@@ -49,6 +48,31 @@ class TaskProvider with ChangeNotifier {
     await _firestore.collection('groupChats').doc(_groupId).collection('tasks').doc(task.id).update({'status': 'completed'});
     _pendingTasks.remove(task);
     _completedTasks.add(task);
+    notifyListeners();
+  }
+
+  Future<void> updateTask(Task updatedTask) async {
+    if (_groupId == null || updatedTask.id == null) return;
+
+    await _firestore.collection('groupChats').doc(_groupId).collection('tasks').doc(updatedTask.id).update(updatedTask.toMap());
+    int index = _pendingTasks.indexWhere((task) => task.id == updatedTask.id);
+    if (index != -1) {
+      _pendingTasks[index] = updatedTask;
+    } else {
+      index = _completedTasks.indexWhere((task) => task.id == updatedTask.id);
+      if (index != -1) {
+        _completedTasks[index] = updatedTask;
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteTask(Task task) async {
+    if (_groupId == null || task.id == null) return;
+
+    await _firestore.collection('groupChats').doc(_groupId).collection('tasks').doc(task.id).delete();
+    _pendingTasks.removeWhere((t) => t.id == task.id);
+    _completedTasks.removeWhere((t) => t.id == task.id);
     notifyListeners();
   }
 }

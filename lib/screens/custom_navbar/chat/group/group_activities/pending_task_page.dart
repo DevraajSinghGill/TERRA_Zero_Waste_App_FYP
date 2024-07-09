@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
+import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/edit_task_page.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/group_task_card.dart';
 import 'task_group_provider.dart';
 import 'task_group.dart';
@@ -57,6 +58,21 @@ class PendingTasksPage extends StatelessWidget {
   void _completeTask(BuildContext context, Task task) {
     Provider.of<TaskProvider>(context, listen: false).completeTask(task);
     _showSuccessDialog(context);
+  }
+
+  void _editTask(BuildContext context, Task task) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EditTaskPage(task: task),
+      ),
+    );
+  }
+
+  void _deleteTask(BuildContext context, Task task) {
+    Provider.of<TaskProvider>(context, listen: false).deleteTask(task);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Task Deleted')),
+    );
   }
 
   @override
@@ -118,14 +134,42 @@ class PendingTasksPage extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                task.title,
-                                style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 16), // Smaller font size
-                              ),
-                              SizedBox(height: 8.0), // Space between title and description
-                              Text(
-                                task.description,
-                                style: AppTextStyles.nunitoSemiBod.copyWith(color: Colors.white70, fontSize: 12), // Smaller font size
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                title: Text(
+                                  task.title,
+                                  style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 16),
+                                ),
+                                subtitle: Text(
+                                  task.description,
+                                  style: AppTextStyles.nunitoSemiBod.copyWith(color: Colors.white70, fontSize: 12),
+                                ),
+                                trailing: PopupMenuButton(
+                                  icon: Icon(Icons.more_vert, color: Colors.white, size: 32), // Increased icon size
+                                  onSelected: (value) {
+                                    if (value == 'edit') {
+                                      _editTask(context, task);
+                                    } else if (value == 'delete') {
+                                      _deleteTask(context, task);
+                                    }
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: 'edit',
+                                      child: Text(
+                                        'Edit',
+                                        style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14),
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'delete',
+                                      child: Text(
+                                        'Delete',
+                                        style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                               SizedBox(height: 16.0), // Space between description and points
                               Align(
@@ -173,3 +217,5 @@ class PendingTasksPage extends StatelessWidget {
     );
   }
 }
+
+

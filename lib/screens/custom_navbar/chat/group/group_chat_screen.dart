@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
+import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/edit_group_details_screen.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/group_activities_page.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/widgets/group_chat_portion.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/widgets/image_sending_portion_in_group.dart';
@@ -28,15 +29,23 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Group Chat",
-          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EditGroupDetailsPage(groupId: widget.groupId)),
+            );
+          },
+          child: Text(
+            "Group Chat",
+            style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
+          ),
         ),
         actions: [
           IconButton(
             icon: Icon(
               Icons.group_rounded,
-              size: 30.0, 
+              size: 30.0,
             ),
             onPressed: () {
               Navigator.push(

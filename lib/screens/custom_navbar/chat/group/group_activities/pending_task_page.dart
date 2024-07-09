@@ -25,7 +25,7 @@ class PendingTasksPage extends StatelessWidget {
                       children: [
                         Image.network(
                           'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/pending_task.gif?alt=media&token=fdd5bd7e-a8a5-4d90-a80c-197035a28399',
-                          height: 150, // Adjusted the height to make it bigger
+                          height: 150, 
                         ),
                         SizedBox(height: 16.0),
                         Text(
@@ -88,6 +88,36 @@ class _TaskCardState extends State<TaskCard> {
     );
   }
 
+  void _showTaskOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.edit),
+                title: Text('Edit'),
+                onTap: () {
+                  // Implement edit functionality
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Delete'),
+                onTap: () {
+                  // Implement delete functionality
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -125,42 +155,74 @@ class _TaskCardState extends State<TaskCard> {
                     widget.task.description,
                     style: AppTextStyles.nunitoSemiBod.copyWith(color: Colors.white70, fontSize: 12), // Smaller font size
                   ),
-                  trailing: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.green[600],
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
+                  trailing: SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: PopupMenuButton(
+                      icon: Icon(Icons.more_vert, color: Colors.white, size: 32),
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          // Implement edit functionality
+                        } else if (value == 'delete') {
+                          // Implement delete functionality
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Text(
+                            'Edit',
+                            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14), // Customize the font here
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text(
+                            'Delete',
+                            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14), // Customize the font here
+                          ),
                         ),
                       ],
-                    ),
-                    child: Text(
-                      '${widget.task.points} points',
-                      style: AppTextStyles.nunitoMedium.copyWith(color: Colors.white, fontSize: 14),
                     ),
                   ),
                 ),
                 SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.green[900],
-                      padding: EdgeInsets.symmetric(horizontal: 35.0, vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.green[600],
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
                       ),
-                      textStyle: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
+                      child: Text(
+                        '${widget.task.points} points',
+                        style: AppTextStyles.nunitoMedium.copyWith(color: Colors.white, fontSize: 14),
+                      ),
                     ),
-                    onPressed: _completeTask,
-                    child: Text('Complete'),
-                  ),
+                    SizedBox(height: 20),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.green[900],
+                        padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0), // Increased button size
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        textStyle: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 16), // Increased text size
+                      ),
+                      onPressed: _completeTask,
+                      child: Text('Complete'),
+                    ),
+                  ],
                 ),
               ],
             ),

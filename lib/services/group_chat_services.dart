@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/models/group_model.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_chat_screen.dart';
@@ -33,10 +33,8 @@ class GroupChatServices {
         Provider.of<LoadingController>(context, listen: false).setLoading(true);
 
         var groupId = const Uuid().v4();
-        DocumentSnapshot snapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .get();
+        DocumentSnapshot snapshot =
+            await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
 
         String? imageUrl;
         if (image != null) {
@@ -64,6 +62,27 @@ class GroupChatServices {
       }
     }
   }
+  //
+  // Future<void> enterToGroup() async {
+  //   DocumentSnapshot snap = await FirebaseFirestore.instance.collection('groupChat').doc('1').get();
+  //   if (snap.exists) {
+  //     if (snap['uids'].contains(FirebaseAuth.instance.currentUser!.uid)) {
+  //       Get.to(() => GroupChatScreen());
+  //     } else {
+  //       await FirebaseFirestore.instance.collection('groupChat').doc('1').update({
+  //         'uids': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+  //       }).then((value) {
+  //         Get.to(() => GroupChatScreen());
+  //       });
+  //     }
+  //   } else {
+  //     await FirebaseFirestore.instance.collection('groupChat').doc('1').set({
+  //       'uids': FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+  //       'lastMsg': "",
+  //       'createdAt': DateTime.now(),
+  //     });
+  //   }
+  // }
 
   Future<void> sendMsgInGroup({
     BuildContext? context,
@@ -79,10 +98,8 @@ class GroupChatServices {
     try {
       Provider.of<LoadingController>(context!, listen: false).setLoading(true);
 
-      DocumentSnapshot snap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
+      DocumentSnapshot snap =
+          await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
       DocumentSnapshot groupChatSnap = await FirebaseFirestore.instance.collection('groupChats').doc(groupId).get();
 
       String? imageUrl;
@@ -107,68 +124,12 @@ class GroupChatServices {
         sendingTime: DateTime.now(),
       );
 
-      await FirebaseFirestore.instance
-          .collection('groupChats')
-          .doc(groupId)
-          .collection('messages')
-          .add(groupChatModel.toMap());
+      await FirebaseFirestore.instance.collection('groupChats').doc(groupId).collection('messages').add(groupChatModel.toMap());
       Provider.of<LoadingController>(context, listen: false).setLoading(false);
     } on FirebaseException catch (e) {
       Provider.of<LoadingController>(context!, listen: false).setLoading(false);
+
       showCustomMsg(context, e.message!);
-    }
-  }
-
-  Future<void> updateGroup({
-    required BuildContext context,
-    required String groupId,
-    required String title,
-    required String description,
-    XFile? image,
-  }) async {
-    if (title.isEmpty) {
-      showCustomMsg(context, "Group title required");
-      return;
-    }
-    if (description.isEmpty) {
-      showCustomMsg(context, "Description required");
-      return;
-    }
-    try {
-      Provider.of<LoadingController>(context, listen: false).setLoading(true);
-
-      String? imageUrl;
-      if (image != null) {
-        File _compressImage = await compressImage(File(image.path));
-        imageUrl = await StorageServices().uploadImageToDb(_compressImage);
-      }
-
-      Map<String, dynamic> updateData = {
-        'groupName': title,
-        'description': description,
-        'lastMsgTime': DateTime.now(),
-      };
-      if (imageUrl != null) {
-        updateData['groupImage'] = imageUrl;
-      }
-
-      await FirebaseFirestore.instance.collection('groupChats').doc(groupId).update(updateData);
-
-      Provider.of<LoadingController>(context, listen: false).setLoading(false);
-      showCustomMsg(context, "Group details updated successfully");
-    } on FirebaseException catch (e) {
-      Provider.of<LoadingController>(context, listen: false).setLoading(false);
-      showCustomMsg(context, e.message!);
-    }
-  }
-
-  Future<Map<String, dynamic>> getGroupDetails(String groupId) async {
-    try {
-      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance.collection('groupChats').doc(groupId).get();
-      return docSnapshot.data() as Map<String, dynamic>;
-    } catch (e) {
-      print(e.toString());
-      return {};
     }
   }
 }

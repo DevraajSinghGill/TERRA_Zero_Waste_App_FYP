@@ -1,4 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,11 +21,48 @@ class RedeemVoucherPage extends StatefulWidget {
 
 class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
   late int totalPoints;
+  String data = '';
+  final GlobalKey _qrkey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     totalPoints = widget.initialPoints;
+  }
+
+  Future<void> _captureAndSavePng() async {
+    try {
+      RenderRepaintBoundary boundary =
+          _qrkey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      var image = await boundary.toImage(pixelRatio: 3.0);
+
+      final whitePaint = Paint()..color = Colors.white;
+      final recorder = PictureRecorder();
+      final canvas = Canvas(recorder,
+          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()));
+      canvas.drawRect(
+          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+          whitePaint);
+      canvas.drawImage(image, Offset.zero, Paint());
+      final picture = recorder.endRecording();
+      final img = await picture.toImage(image.width, image.height);
+      ByteData? byteData = await img.toByteData(format: ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      final directory = await getApplicationDocumentsDirectory();
+      final path = '${directory.path}/qr_code.png';
+
+      final file = await File(path).create();
+      await file.writeAsBytes(pngBytes);
+
+      if (!mounted) return;
+      const snackBar = SnackBar(content: Text('QR code saved to gallery'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      if (!mounted) return;
+      const snackBar = SnackBar(content: Text('Something went wrong!!!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   Future<void> _redeemVoucher(BuildContext context, int points) async {
@@ -47,6 +90,10 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
         content: Text('Voucher redeemed successfully!'),
         backgroundColor: Colors.teal[800],
       ));
+
+      setState(() {
+        data = DateTime.now().millisecondsSinceEpoch.toString();
+      });
 
       _showQRCodeBottomSheet(context);
     } catch (e) {
@@ -118,10 +165,36 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Image.asset(
-                      'lib/assets/images/qr_code.png',
-                      width: 200.0,
-                      height: 200.0,
+                    RepaintBoundary(
+                      key: _qrkey,
+                      child: QrImageView(
+                        data: data,
+                        version: QrVersions.auto,
+                        size: 250.0,
+                        gapless: true,
+                        errorStateBuilder: (ctx, err) {
+                          return const Center(
+                            child: Text(
+                              'Something went wrong!!!',
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    RawMaterialButton(
+                      onPressed: _captureAndSavePng,
+                      fillColor: Colors.teal[800],
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
+                      child: const Text(
+                        'Export',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(

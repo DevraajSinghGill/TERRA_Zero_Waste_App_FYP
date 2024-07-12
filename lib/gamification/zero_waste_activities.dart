@@ -423,7 +423,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
                 child: Text(
                   day,
                   style: GoogleFonts.poppins(
-                    fontSize: 16, // Increased font size
+                    fontSize: 14, // Increased font size
                     color: selectedDay == day ? Colors.white : Colors.teal,
                     fontWeight: FontWeight.bold,
                   ),

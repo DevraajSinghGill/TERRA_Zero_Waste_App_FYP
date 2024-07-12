@@ -122,15 +122,7 @@ flutter:
 
 
 
-   - lib/assets/gif_icons/shopping_bag.gif
 
-   - lib/assets/gif_icons/meal_plan.gif
-   - lib/assets/gif_icons/bottle.gif
-
-   - lib/assets/gif_icons/coffee-cup.gif
-   - lib/assets/gif_icons/clapperboard.gif
-   - lib/assets/gif_icons/basket.gif
-   - lib/assets/gif_icons/10-percent.gif
    - lib/assets/gif_icons/tick.gif
 
    - lib/assets/gif_icons/organic_splash.gif

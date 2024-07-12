@@ -5,19 +5,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'activity_card.dart'; // Import the ActivityCard widget
+import 'package:intl/intl.dart'; // Import for date formatting
 
 class ZeroWasteActivities extends StatefulWidget {
   @override
   _ZeroWasteActivitiesState createState() => _ZeroWasteActivitiesState();
 }
 
-class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
-    with SingleTickerProviderStateMixin {
+class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTickerProviderStateMixin {
   late ConfettiController _confettiController;
   late AnimationController _animationController;
   late Animation<Offset> _offsetAnimation;
   List<Map<String, dynamic>> completedTasks = [];
+  List<Map<String, dynamic>> activities = [];
   String? userId;
+  String selectedDay = 'All';
+
+  final List<String> daysOfWeek = [
+    'All',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -25,8 +38,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
   @override
   void initState() {
     super.initState();
-    _confettiController =
-        ConfettiController(duration: const Duration(seconds: 3));
+    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
     _animationController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -40,6 +52,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
     ));
 
     _fetchUserData();
+    _fetchActivities();
   }
 
   Future<void> _fetchUserData() async {
@@ -60,6 +73,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
                       'task': doc['task'],
                       'points': doc['points'],
                       'icon': doc['icon'],
+                      'completionDate': doc['completionDate'], // Add completionDate
                     })
                 .toList();
           });
@@ -67,6 +81,28 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
       }
     } catch (e) {
       print('Error fetching user data: $e');
+      // Handle error accordingly (e.g., show a message to the user)
+    }
+  }
+
+  Future<void> _fetchActivities() async {
+    try {
+      QuerySnapshot activitiesSnapshot = await _firestore.collection('zeroActivities').get();
+      setState(() {
+        activities = activitiesSnapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          return {
+            'title': data['title'] ?? 'No Title',
+            'description': data['description'] ?? 'No Description',
+            'iconPath': data['iconPath'] ?? 'https://example.com/default-icon.png',
+            'points': data['points'] ?? 0,
+            'days': List<String>.from(data['days'] ?? []), // Fetch days field
+          };
+        }).toList();
+      });
+      print('Fetched activities: $activities');
+    } catch (e) {
+      print('Error fetching activities: $e');
       // Handle error accordingly (e.g., show a message to the user)
     }
   }
@@ -81,10 +117,19 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
   void completeTask(String task, int points, String iconPath) {
     User? user = _auth.currentUser;
     if (user != null) {
+      String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      bool alreadyCompleted = completedTasks.any((completedTask) =>
+          completedTask['task'] == task && completedTask['completionDate'] == todayDate);
+
+      if (alreadyCompleted) {
+        _showAlreadyCompletedDialog(task);
+        return;
+      }
+
       setState(() {
-        completedTasks.add({'task': task, 'points': points, 'icon': iconPath});
+        completedTasks.add({'task': task, 'points': points, 'icon': iconPath, 'completionDate': todayDate});
       });
-      _saveTaskToFirestore(user.uid, task, points, iconPath);
+      _saveTaskToFirestore(user.uid, task, points, iconPath, todayDate);
       _updateUserPoints(user.uid, points);
       _showSuccessDialog(task, points);
     } else {
@@ -134,7 +179,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
   }
 
   void _saveTaskToFirestore(
-      String uid, String task, int points, String iconPath) async {
+      String uid, String task, int points, String iconPath, String completionDate) async {
     try {
       await _firestore
           .collection('users')
@@ -144,6 +189,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
         'task': task,
         'points': points,
         'icon': iconPath,
+        'completionDate': completionDate, // Save completionDate
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -229,6 +275,70 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
     });
   }
 
+  void _showAlreadyCompletedDialog(String task) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          contentPadding: EdgeInsets.all(12.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.error,
+                size: 50,
+                color: Colors.red,
+              ),
+              SizedBox(height: 15),
+              Text(
+                'Task Already Completed!',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 14.sp,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'You have already completed the task: $task today.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 10.sp,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: 15),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                ),
+                child: Text(
+                  'CLOSE',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 12.sp,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -254,6 +364,8 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   _buildDescriptionBox(context),
+                  SizedBox(height: 20),
+                  _buildDayFilter(), // Place the day filter here
                   SizedBox(height: 20),
                   _buildActivityCards(),
                 ],
@@ -285,121 +397,71 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities>
     );
   }
 
+  Widget _buildDayFilter() {
+    return Container(
+      height: 65,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: daysOfWeek.length,
+        itemBuilder: (context, index) {
+          final day = daysOfWeek[index];
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedDay = day;
+              });
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              decoration: BoxDecoration(
+                color: selectedDay == day ? Colors.teal : Colors.white,
+                borderRadius: BorderRadius.circular(20.0),
+                border: Border.all(color: Colors.teal),
+              ),
+              child: Center(
+                child: Text(
+                  day,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16, // Increased font size
+                    color: selectedDay == day ? Colors.white : Colors.teal,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildActivityCards() {
+    String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    
+    final filteredActivities = selectedDay == 'All'
+        ? activities
+        : activities.where((activity) => activity['days'].contains(selectedDay)).toList();
+
+    if (filteredActivities.isEmpty) {
+      return Center(child: Text('No activities available for the selected day.'));
+    }
+
     return Column(
-      children: [
-        ActivityCard(
-          title: 'Carry out Composting',
-          description:
-              'Set up a compost bin at home and start composting food scraps and yard waste for a month.',
-          iconPath: 'lib/assets/gif_icons/composting.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('Carry out Composting', 100,
-              'lib/assets/gif_icons/composting.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'Use Reusable Bags',
-          description:
-              'Bring your own reusable shopping bags to the store.',
-          iconPath: 'lib/assets/gif_icons/shopping_bag.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('Use Reusable Bags', 100,
-              'lib/assets/gif_icons/shopping_bag.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'Donate Items Away',
-          description:
-              'Donate items such as clothes, furniture, and other items you no longer need to a local thrift store or charity.',
-          iconPath: 'lib/assets/gif_icons/charity.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('Donate Items Away', 100,
-              'lib/assets/gif_icons/charity.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'Carpool',
-          description:
-              'Organize and participate in carpooling with friends and family to reduce the number of vehicles on the road',
-          iconPath: 'lib/assets/gif_icons/mini-car.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask(
-              'Carpool', 100, 'lib/assets/gif_icons/mini-car.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'Collect Rainwater',
-          description:
-              'Set up a rainwater harvesting system and use the collected water for watering your garden and plants.',
-          iconPath: 'lib/assets/gif_icons/water.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('Collect Rainwater', 100,
-              'lib/assets/gif_icons/water.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'Use Public Transport',
-          description:
-              'Use public transportation for your daily commute for a month.',
-          iconPath: 'lib/assets/gif_icons/train.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('Use Public Transport', 100,
-              'lib/assets/gif_icons/train.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'Do a Meal Plan',
-          description:
-              'Plan your meals for a week to minimize food waste and leftovers.',
-          iconPath: 'lib/assets/gif_icons/meal_plan.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('Do a Meal Plan', 100,
-              'lib/assets/gif_icons/meal_plan.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'Reusable Water Bottle',
-          description:
-              'Carry and use a reusable water bottle for a month instead of buying bottled water.',
-          iconPath: 'lib/assets/gif_icons/bottle.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('Reusable Water Bottle', 100,
-              'lib/assets/gif_icons/bottle.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'Grow Your Own Food',
-          description:
-              'Create and use your own cleaning products using natural ingredients.',
-          iconPath: 'lib/assets/gif_icons/plant.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('Grow Your Own Food', 100,
-              'lib/assets/gif_icons/plant.gif'),
-        ),
-        SizedBox(height: 8),
-        ActivityCard(
-          title: 'DIY Cleaning Products',
-          description:
-              'Create and use your own cleaning products using natural ingredients.',
-          iconPath: 'lib/assets/gif_icons/cleaning.gif',
-          imagePath: '',
-          points: 100,
-          onComplete: () => completeTask('DIY Cleaning Products', 100,
-              'lib/assets/gif_icons/cleaning.gif'),
-        ),
-        SizedBox(height: 8),
-        // Add more activity cards here
-      ],
+      children: filteredActivities.map((activity) {
+        bool isCompletedToday = completedTasks.any((completedTask) =>
+          completedTask['task'] == activity['title'] && completedTask['completionDate'] == todayDate);
+
+        return ActivityCard(
+          title: activity['title'],
+          description: activity['description'],
+          iconPath: activity['iconPath'],
+          imagePath: '', // You can add logic to handle imagePath if needed
+          points: activity['points'],
+          onComplete: () => completeTask(activity['title'], activity['points'], activity['iconPath']),
+          disabled: isCompletedToday,
+        );
+      }).toList(),
     );
   }
 

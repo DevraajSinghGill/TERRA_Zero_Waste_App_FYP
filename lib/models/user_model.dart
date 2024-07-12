@@ -20,7 +20,7 @@ class UserModel {
     required this.followers,
     required this.following,
     required this.savePosts,
-    required this.memberSince,
+    required this.memberSince, required String role,
   });
 
   Map<String, dynamic> toMap() {
@@ -48,6 +48,7 @@ class UserModel {
       following: map['following'] as List,
       savePosts: map['savePosts'] as List,
       memberSince: (map['memberSince'].toDate()),
+      role: map['role'] as String,
     );
   }
 }

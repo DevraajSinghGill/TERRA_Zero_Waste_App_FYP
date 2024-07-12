@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/handler/auth_exception_handler.dart';
 import 'package:terra_zero_waste_app/models/user_model.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_home_page.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/custom_navbar.dart';
 import 'package:terra_zero_waste_app/services/image_compress_services.dart';
 import 'package:terra_zero_waste_app/services/storage_services.dart';
@@ -53,9 +54,12 @@ class AuthServices extends ChangeNotifier {
           following: [],
           savePosts: [],
           memberSince: DateTime.now(),
+          role: 'user', // Default role as user
         );
         await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set(userModel.toMap());
         Provider.of<LoadingController>(context, listen: false).setLoading(false);
+        
+        // Redirect based on role
         Get.offAll(() => CustomNavBar());
       } on FirebaseAuthException catch (e) {
         Provider.of<LoadingController>(context, listen: false).setLoading(false);
@@ -78,7 +82,20 @@ class AuthServices extends ChangeNotifier {
         await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
         Provider.of<LoadingController>(context, listen: false).setLoading(false);
 
-        Get.offAll(() => CustomNavBar());
+        // Fetch user role
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+          String role = userDoc['role'];
+
+          if (role == 'user') {
+            Get.offAll(() => CustomNavBar());
+          } else if (role == 'admin') {
+            Get.offAll(() => AdminHomePage());
+          } else {
+            Get.snackbar('Error', 'User role not found', snackPosition: SnackPosition.BOTTOM);
+          }
+        }
       } on FirebaseAuthException catch (e) {
         Provider.of<LoadingController>(context, listen: false).setLoading(false);
 
@@ -98,7 +115,7 @@ class AuthServices extends ChangeNotifier {
         await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
         Provider.of<LoadingController>(context, listen: false).setLoading(false);
 
-        showCustomMsg(context, "A Password Reset Email has been sent to $email please Check and reset your password");
+        showCustomMsg(context, "A Password Reset Email has been sent to $email please check and reset your password");
         Get.back();
       } on FirebaseAuthException catch (e) {
         Provider.of<LoadingController>(context, listen: false).setLoading(false);
@@ -139,12 +156,22 @@ class AuthServices extends ChangeNotifier {
                 'description': "",
                 'followers': [],
                 'following': [],
+                'role': 'user', // Default role as user
               },
             );
+          } else {
+            // Fetch user role
+            String role = userDoc['role'];
+            if (role == 'user') {
+              Get.offAll(() => CustomNavBar());
+            } else if (role == 'admin') {
+              Get.offAll(() => AdminHomePage());
+            } else {
+              Get.snackbar('Error', 'User role not found', snackPosition: SnackPosition.BOTTOM);
+            }
           }
         }
         response = "Login Successful";
-        Get.offAll(() => CustomNavBar());
       } else {
         response = "Oops! Login unsuccessful!";
       }

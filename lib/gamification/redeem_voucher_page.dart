@@ -229,86 +229,32 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                 children: <Widget>[
                   _buildRedeemBox(),
                   SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    '10% Off Coupon',
-                    'Redeem this voucher for a 10% discount on your next purchase.',
-                    'lib/assets/gif_icons/10-percent.gif',
-                    100,
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection('redeemVoucher').snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      var vouchers = snapshot.data!.docs;
+
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: vouchers.length,
+                        itemBuilder: (context, index) {
+                          var voucher = vouchers[index];
+                          return _buildVoucherCard(
+                            context,
+                            voucher['title'],
+                            voucher['description'],
+                            voucher['iconPath'],
+                            voucher['points'],
+                          );
+                        },
+                      );
+                    },
                   ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    'Free Coffee',
-                    'Enjoy a free cup of coffee at our participating outlets.',
-                    'lib/assets/gif_icons/coffee-cup.gif',
-                    100,
-                  ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    'Movie Ticket',
-                    'Redeem a free movie ticket at any of our partner cinemas.',
-                    'lib/assets/gif_icons/clapperboard.gif',
-                    100,
-                  ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    'Grocery Discount',
-                    "Get a RM5 discount on your next grocery purchase.",
-                    'lib/assets/gif_icons/basket.gif',
-                    100,
-                  ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    '10% Off Coupon',
-                    'Redeem this voucher for a 10% discount on your next purchase.',
-                    'lib/assets/gif_icons/10-percent.gif',
-                    100,
-                  ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    'Free Coffee',
-                    'Enjoy a free cup of coffee at our participating outlets.',
-                    'lib/assets/gif_icons/coffee-cup.gif',
-                    100,
-                  ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    'Movie Ticket',
-                    'Redeem a free movie ticket at any of our partner cinemas.',
-                    'lib/assets/gif_icons/clapperboard.gif',
-                    100,
-                  ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    'Grocery Discount',
-                    "Get a RM5 discount on your next grocery purchase.",
-                    'lib/assets/gif_icons/basket.gif',
-                    100,
-                  ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    'Movie Ticket',
-                    'Redeem a free movie ticket at any of our partner cinemas.',
-                    'lib/assets/gif_icons/clapperboard.gif',
-                    100,
-                  ),
-                  SizedBox(height: 16),
-                  _buildVoucherCard(
-                    context,
-                    'Grocery Discount',
-                    "Get a RM5 discount on your next grocery purchase.",
-                    'lib/assets/gif_icons/basket.gif',
-                    100,
-                  ),
-                  // Add more voucher cards here as needed
                 ],
               ),
             ),
@@ -413,10 +359,10 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Center(
-                      child: Image.asset(
+                      child: Image.network(
                         gifPath,
-                        width: 50,
-                        height: 50,
+                        width: 80,
+                        height: 80, // Increased size
                       ),
                     ),
                     SizedBox(height: 6),

@@ -113,18 +113,18 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
                 onTabChange: _onItemTapped,
                 tabs: [
                   GButton(
-                    icon: Icons.home,
-                    text: 'Home',
+                    icon: Icons.add_task,
+                    text: 'Pending',
                     textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
                   ),
                   GButton(
-                    icon: Icons.search,
-                    text: 'Search',
+                    icon: Icons.approval_outlined,
+                    text: 'Approved',
                     textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
                   ),
                   GButton(
-                    icon: Icons.chat,
-                    text: 'Chat',
+                    icon: Icons.qr_code,
+                    text: 'QR Code',
                     textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
                   ),
                   GButton(

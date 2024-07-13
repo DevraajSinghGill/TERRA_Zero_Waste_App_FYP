@@ -4,10 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_home_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_profile_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_search.dart';
-import 'package:terra_zero_waste_app/screens/admin/chat_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_main.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_profle_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_approved_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_qr_page.dart';
 import 'package:terra_zero_waste_app/screens/auth/login_screen.dart';
 
 class AdminPage extends StatefulWidget {
@@ -25,9 +25,9 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<Widget> screensList = [
-    const AdminHomePage(),
-    const AdminSearchPage(),
-    const AdminChatPage(),
+    const AdminPendingPage(),
+    const AdminApprovedPage(),
+    const AdminQrPage(),
     const AdminProfilePage(),
   ];
 

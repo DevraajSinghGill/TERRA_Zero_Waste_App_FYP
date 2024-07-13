@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'activity_card.dart'; // Import the ActivityCard widget
 import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:firebase_storage/firebase_storage.dart'; // Import for Firebase Storage
 
 class ZeroWasteActivities extends StatefulWidget {
   @override
@@ -129,9 +131,8 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
       setState(() {
         completedTasks.add({'task': task, 'points': points, 'icon': iconPath, 'completionDate': todayDate});
       });
-      _saveTaskToFirestore(user.uid, task, points, iconPath, todayDate);
-      _updateUserPoints(user.uid, points);
-      _showSuccessDialog(task, points);
+      _saveTaskToPending(user.uid, task, points, iconPath, todayDate);
+      _showPendingApprovalDialog(task, points);
     } else {
       // Prompt user to sign in
       print('User not signed in');
@@ -178,36 +179,26 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
     });
   }
 
-  void _saveTaskToFirestore(
+  void _saveTaskToPending(
       String uid, String task, int points, String iconPath, String completionDate) async {
     try {
       await _firestore
-          .collection('users')
-          .doc(uid)
-          .collection('completedTasks')
+          .collection('pendingTasks')
           .add({
+        'uid': uid,
         'task': task,
         'points': points,
         'icon': iconPath,
-        'completionDate': completionDate, // Save completionDate
+        'completionDate': completionDate,
         'timestamp': FieldValue.serverTimestamp(),
+        'status': 'pending',
       });
     } catch (e) {
-      print('Error saving task to Firestore: $e');
+      print('Error saving task to pending tasks: $e');
     }
   }
 
-  void _updateUserPoints(String uid, int points) async {
-    try {
-      await _firestore.collection('users').doc(uid).update({
-        'totalPoints': FieldValue.increment(points),
-      });
-    } catch (e) {
-      print('Error updating user points: $e');
-    }
-  }
-
-  void _showSuccessDialog(String task, int points) {
+  void _showPendingApprovalDialog(String task, int points) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -216,31 +207,32 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
             borderRadius: BorderRadius.circular(15),
           ),
           contentPadding: EdgeInsets.all(12.0),
+          backgroundColor: Colors.white, // Set background color to white
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                'lib/assets/gif_icons/tick.gif',
+              Image.network(
+                'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/pending_task.gif?alt=media&token=fdd5bd7e-a8a5-4d90-a80c-197035a28399',
                 height: 150,
                 width: 150,
               ),
               SizedBox(height: 15),
               Text(
-                'Congratulations!',
+                'Task Pending Approval',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w900,
                   fontSize: 14.sp,
-                  color: Colors.black,
+                  color: Colors.black, // Set text color to black
                 ),
               ),
               SizedBox(height: 8),
               Text(
-                'You have successfully completed the task: $task',
+                'Your task "$task" is pending approval. You will be notified once it has been reviewed.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   fontSize: 10.sp,
-                  color: Colors.black,
+                  color: Colors.black, // Set text color to black
                 ),
               ),
               SizedBox(height: 15),
@@ -249,12 +241,11 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                 ),
                 child: Text(
                   'CLOSE',
@@ -269,10 +260,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
           ),
         );
       },
-    ).then((_) {
-      _showConfetti();
-      _showPointsFlyAnimation(points);
-    });
+    );
   }
 
   void _showAlreadyCompletedDialog(String task) {

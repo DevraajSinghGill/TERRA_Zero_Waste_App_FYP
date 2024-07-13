@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AdminSearchPage extends StatelessWidget {
-  const AdminSearchPage({super.key});
+class AdminApprovedPage extends StatelessWidget {
+  const AdminApprovedPage({super.key});
 
   @override
   Widget build(BuildContext context) {

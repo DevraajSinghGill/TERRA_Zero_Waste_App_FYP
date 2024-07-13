@@ -126,6 +126,7 @@ flutter:
    - lib/assets/images/gardening.jpg
    - lib/assets/images/person.png
    - lib/assets/images/teamwork.jpg
+   - lib/assets/images/chat.png
 
 
    - lib/assets/images/google_sign_in.png

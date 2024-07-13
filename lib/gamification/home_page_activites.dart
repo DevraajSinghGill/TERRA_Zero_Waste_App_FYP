@@ -148,7 +148,7 @@ class HomePageActivities extends StatelessWidget {
           _buildOptionCard(
             context,
             'View Catalog of Activities',
-            'image_icon.gif', // Firebase Storage path
+            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/list.gif?alt=media&token=c9bbc1c3-5cfb-4fe5-879d-73004afcea65', // URL directly used
             'Explore various activities to promote zero waste and earn more points.',
             () => Navigator.push(
                 context,
@@ -172,239 +172,193 @@ class HomePageActivities extends StatelessWidget {
   }
 
   Widget _buildWelcomeSection(String userName) {
-    return FutureBuilder<String>(
-      future: _getGifUrl('mother-earth-day.gif'), // Firebase Storage path
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Hello, $userName ",
-                  style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      color: Colors.black)),
-              CircularProgressIndicator(),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        } else {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text("Hello, $userName ",
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: Colors.black)),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    child: Image.network(snapshot.data ?? '', fit: BoxFit.cover),
-                  ),
-                ],
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Text("Hello, $userName ",
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.black)),
+            Container(
+              width: 50,
+              height: 50,
+              child: Image.network(
+                'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/earth_banner_icon.gif?alt=media&token=4102ccf2-e0b9-4fe0-85aa-1ceed9c76d3d',
+                fit: BoxFit.cover,
               ),
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ],
-          );
-        }
-      },
+            ),
+          ],
+        ),
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildPointsSection(int combinedPoints) {
-    return FutureBuilder<String>(
-      future: _getGifUrl('money-bag.gif'), // Firebase Storage path
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        } else {
-          return Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: _buildBoxDecoration(),
-            child: Column(
-              children: [
-                _buildIconContainer(snapshot.data ?? '', 70.0),
-                SizedBox(height: 10),
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    text: 'You have ',
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
-                        color: Colors.green[900]),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: '$combinedPoints',
-                        style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            color: Color.fromARGB(255, 217, 25, 25)),
-                      ),
-                      TextSpan(
-                        text: ' points',
-                        style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            color: Colors.green[900]),
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  'remaining',
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: _buildBoxDecoration(),
+      child: Column(
+        children: [
+          _buildIconContainer(
+            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/money-bag.gif?alt=media&token=1c2de905-fce2-476a-bd7c-03b5d3220193',
+            70.0,
+          ),
+          SizedBox(height: 10),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: 'You have ',
+              style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
+                  color: Colors.green[900]),
+              children: <TextSpan>[
+                TextSpan(
+                  text: '$combinedPoints',
                   style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
-                      fontSize: 15,
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 217, 25, 25)),
+                ),
+                TextSpan(
+                  text: ' points',
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
                       color: Colors.green[900]),
                 ),
               ],
             ),
-          );
-        }
-      },
+          ),
+          Text(
+            'remaining',
+            style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w500,
+                fontSize: 15,
+                color: Colors.green[900]),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildRedeemSection(BuildContext context, int combinedPoints) {
-    return FutureBuilder<String>(
-      future: _getGifUrl('coupon.gif'), // Firebase Storage path
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        } else {
-          return Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              gradient: LinearGradient(
-                  colors: [Colors.green[400]!, Colors.green[600]!]),
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+            colors: [Colors.green[400]!, Colors.green[600]!]),
+      ),
+      child: Column(
+        children: [
+          _buildIconContainer(
+            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/coupon.gif?alt=media&token=4b180f0f-67db-48e9-b467-07f5fbafebbc',
+            70.0,
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RedeemVoucherPage(
+                          userId: _auth.currentUser!.uid,
+                          initialPoints: combinedPoints)));
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
             ),
-            child: Column(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _buildIconContainer(snapshot.data ?? '', 70.0),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RedeemVoucherPage(
-                                userId: _auth.currentUser!.uid,
-                                initialPoints: combinedPoints)));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.qr_code, color: Colors.white, size: 20),
-                      SizedBox(width: 10),
-                      Text('Redeem Now',
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                              color: Colors.white)),
-                      SizedBox(width: 10),
-                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text('Use this QR code when you checkout to get points',
+                Icon(Icons.qr_code, color: Colors.white, size: 20),
+                SizedBox(width: 10),
+                Text('Redeem Now',
                     style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                        color: Colors.white),
-                    textAlign: TextAlign.center),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white)),
+                SizedBox(width: 10),
+                Icon(Icons.arrow_forward, color: Colors.white, size: 20),
               ],
             ),
-          );
-        }
-      },
+          ),
+          SizedBox(height: 10),
+          Text('Use this QR code when you checkout to get points',
+              style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: Colors.white),
+              textAlign: TextAlign.center),
+        ],
+      ),
     );
   }
 
   Widget _buildOptionCard(
       BuildContext context,
       String title,
-      String gifPath,
+      String gifUrl,
       String description,
       VoidCallback onTap,
       Color startColor,
       Color endColor) {
-    return FutureBuilder<String>(
-      future: _getGifUrl(gifPath), // Firebase Storage path
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        } else {
-          return GestureDetector(
-            onTap: onTap,
-            child: Container(
-              margin: EdgeInsets.only(bottom: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                gradient: LinearGradient(
-                  colors: [startColor, endColor],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 0,
-                    blurRadius: 6,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    _buildIconContainer(snapshot.data ?? '', 70.0),
-                    SizedBox(height: 10),
-                    Text(title,
-                        style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: Colors.white)),
-                    SizedBox(height: 8),
-                    Text(description,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: Colors.white70)),
-                  ],
-                ),
-              ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(
+            colors: [startColor, endColor],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 0,
+              blurRadius: 6,
+              offset: Offset(0, 2),
             ),
-          );
-        }
-      },
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              _buildIconContainer(gifUrl, 70.0),
+              SizedBox(height: 10),
+              Text(title,
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.white)),
+              SizedBox(height: 8),
+              Text(description,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: Colors.white70)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -447,14 +401,5 @@ class HomePageActivities extends StatelessWidget {
         child: Image.network(gifUrl, fit: BoxFit.cover),
       ),
     );
-  }
-
-  Future<String> _getGifUrl(String fileName) async {
-    try {
-      return await FirebaseStorage.instance.ref(fileName).getDownloadURL();
-    } catch (e) {
-      print('Error loading GIF icon: $e');
-      return '';
-    }
   }
 }

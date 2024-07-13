@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/handler/auth_exception_handler.dart';
 import 'package:terra_zero_waste_app/models/user_model.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_home_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/custom_navbar.dart';
 import 'package:terra_zero_waste_app/services/image_compress_services.dart';
 import 'package:terra_zero_waste_app/services/storage_services.dart';
@@ -91,7 +91,7 @@ class AuthServices extends ChangeNotifier {
           if (role == 'user') {
             Get.offAll(() => CustomNavBar());
           } else if (role == 'admin') {
-            Get.offAll(() => AdminHomePage());
+            Get.offAll(() => AdminPage());
           } else {
             Get.snackbar('Error', 'User role not found', snackPosition: SnackPosition.BOTTOM);
           }
@@ -165,7 +165,7 @@ class AuthServices extends ChangeNotifier {
             if (role == 'user') {
               Get.offAll(() => CustomNavBar());
             } else if (role == 'admin') {
-              Get.offAll(() => AdminHomePage());
+              Get.offAll(() => AdminPage());
             } else {
               Get.snackbar('Error', 'User role not found', snackPosition: SnackPosition.BOTTOM);
             }

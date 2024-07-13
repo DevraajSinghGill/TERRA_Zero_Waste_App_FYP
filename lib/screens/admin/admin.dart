@@ -26,7 +26,6 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
 
   final List<Widget> screensList = [
     const AdminPendingPage(),
-    const AdminApprovedPage(),
     const AdminQrPage(),
     const AdminProfilePage(),
   ];
@@ -113,13 +112,8 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
                 onTabChange: _onItemTapped,
                 tabs: [
                   GButton(
-                    icon: Icons.add_task,
-                    text: 'Pending',
-                    textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
-                  ),
-                  GButton(
-                    icon: Icons.approval_outlined,
-                    text: 'Approved',
+                    icon: Icons.apps,
+                    text: 'Tasks',
                     textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
                   ),
                   GButton(
@@ -150,10 +144,8 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
       case 0:
         return "Home";
       case 1:
-        return "Search";
-      case 2:
         return "Chat";
-      case 3:
+      case 2:
         return "Profile";
       default:
         return "";

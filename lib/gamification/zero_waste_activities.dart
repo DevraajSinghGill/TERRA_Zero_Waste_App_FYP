@@ -21,6 +21,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
   List<Map<String, dynamic>> completedTasks = [];
   List<Map<String, dynamic>> activities = [];
   String? userId;
+  String? username;
   String selectedDay = 'All';
 
   final List<String> daysOfWeek = [
@@ -64,6 +65,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
         userId = user.uid;
         DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
         if (userDoc.exists) {
+          username = userDoc['username'];
           QuerySnapshot completedTasksSnapshot = await _firestore
               .collection('users')
               .doc(user.uid)
@@ -131,7 +133,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
       setState(() {
         completedTasks.add({'task': task, 'points': points, 'icon': iconPath, 'completionDate': todayDate});
       });
-      _saveTaskToPending(user.uid, task, points, iconPath, todayDate);
+      _saveTaskToPending(user.uid, task, points, iconPath, todayDate, username!);
       _showPendingApprovalDialog(task, points);
     } else {
       // Prompt user to sign in
@@ -180,11 +182,12 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
   }
 
   void _saveTaskToPending(
-      String uid, String task, int points, String iconPath, String completionDate) async {
+      String uid, String task, int points, String iconPath, String completionDate, String username) async {
     try {
       await _firestore
           .collection('pendingTasks')
           .add({
+        'username': username,
         'uid': uid,
         'task': task,
         'points': points,

@@ -51,6 +51,105 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
     return 'Unknown User';
   }
 
+  Color _getButtonColor(String status, bool isSelected) {
+    if (!isSelected) {
+      return Colors.white;
+    }
+    switch (status) {
+      case 'approved':
+        return Colors.green[700]!;
+      case 'rejected':
+        return Colors.red[700]!;
+      case 'pending':
+      default:
+        return Colors.yellow[700]!;
+    }
+  }
+
+  Color _getButtonTextColor(String status, bool isSelected) {
+    if (isSelected) {
+      return Colors.white;
+    }
+    switch (status) {
+      case 'approved':
+        return Colors.green[700]!;
+      case 'rejected':
+        return Colors.red[700]!;
+      case 'pending':
+      default:
+        return Colors.yellow[700]!;
+    }
+  }
+
+  void _showConfirmationDialog(String taskId, String action) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              'Confirm $action',
+              style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp),
+            ),
+          ),
+          content: Text(
+            'Are you sure you want to $action this task?',
+            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14.sp),
+            textAlign: TextAlign.center,
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (action == 'approve') {
+                        _approveTask(taskId);
+                      } else {
+                        _rejectTask(taskId);
+                      }
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: Text(
+                      'Confirm',
+                      style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,32 +305,33 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
                                       textAlign: TextAlign.center,
                                     ),
                                     SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () => _approveTask(task.id),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.green,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10.0),
+                                    if (selectedStatus == 'pending') // Conditionally render the buttons
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () => _showConfirmationDialog(task.id, 'approve'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10.0),
+                                              ),
                                             ),
+                                            child: Text('Approve', style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp)),
                                           ),
-                                          child: Text('Approve', style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp)),
-                                        ),
-                                        SizedBox(width: 20),
-                                        ElevatedButton(
-                                          onPressed: () => _rejectTask(task.id),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.red,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10.0),
+                                          SizedBox(width: 20),
+                                          ElevatedButton(
+                                            onPressed: () => _showConfirmationDialog(task.id, 'reject'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10.0),
+                                              ),
                                             ),
+                                            child: Text('Reject', style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp)),
                                           ),
-                                          child: Text('Reject', style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp)),
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      ),
                                     SizedBox(height: 10),
                                     Align(
                                       alignment: Alignment.bottomRight,
@@ -274,6 +374,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
   }
 
   Widget _buildStatusButton(String label, String status) {
+    bool isSelected = selectedStatus == status;
     return ElevatedButton(
       onPressed: () {
         setState(() {
@@ -281,15 +382,15 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
         });
       },
       style: ElevatedButton.styleFrom(
-        foregroundColor: selectedStatus == status ? Colors.white : Colors.teal,
-        backgroundColor: selectedStatus == status ? Colors.blue[600] : Colors.white,
+        foregroundColor: _getButtonTextColor(status, isSelected),
+        backgroundColor: _getButtonColor(status, isSelected),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
       ),
       child: Text(
         label,
-        style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: selectedStatus == status ? Colors.white : Colors.blue[600]),
+        style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: _getButtonTextColor(status, isSelected)),
       ),
     );
   }

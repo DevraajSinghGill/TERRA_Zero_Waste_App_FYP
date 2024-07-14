@@ -7,7 +7,6 @@ import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/screens/admin/admin_main.dart';
 import 'package:terra_zero_waste_app/screens/admin/admin_profle_page.dart';
 import 'package:terra_zero_waste_app/screens/admin/admin_approved_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_qr_page.dart';
 import 'package:terra_zero_waste_app/screens/auth/login_screen.dart';
 
 class AdminPage extends StatefulWidget {
@@ -26,7 +25,7 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
 
   final List<Widget> screensList = [
     const AdminPendingPage(),
-    const AdminQrPage(),
+    const AdminApprovedPage(),
     const AdminProfilePage(),
   ];
 

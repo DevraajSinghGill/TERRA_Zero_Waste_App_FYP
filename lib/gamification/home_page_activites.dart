@@ -8,9 +8,15 @@ import 'package:terra_zero_waste_app/gamification/total_points_page.dart';
 import 'package:terra_zero_waste_app/gamification/zero_waste_activities.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomePageActivities extends StatelessWidget {
+class HomePageActivities extends StatefulWidget {
+  @override
+  _HomePageActivitiesState createState() => _HomePageActivitiesState();
+}
+
+class _HomePageActivitiesState extends State<HomePageActivities> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -146,33 +152,7 @@ class HomePageActivities extends StatelessWidget {
           SizedBox(height: 10),
           _buildPointsSection(combinedPoints),
           SizedBox(height: 20),
-          _buildOptionCard(
-            context,
-            'View Catalog of Activities',
-            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/list.gif?alt=media&token=c9bbc1c3-5cfb-4fe5-879d-73004afcea65', // URL directly used
-            'Explore various activities to promote zero waste and earn more points.',
-            () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ZeroWasteActivities())),
-            Colors.green[600]!,
-            Colors.green[900]!,
-          ),
-          SizedBox(height: 20), // Add spacing between sections
-          _buildOptionCard(
-            context,
-            'Review Task Status',
-            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/no_task.gif?alt=media&token=cfdc586e-5068-4b98-b563-540ebce5f32f', // Add a suitable URL for the icon
-            'Check the status of your submitted tasks.',
-            () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ReviewTaskStatusPage())), // Navigate to the new page
-            Colors.orange[400]!,
-            Colors.orange[900]!,
-          ),
-          SizedBox(height: 20),
-          _buildRedeemSection(context, combinedPoints),
+          _buildTabSection(context, combinedPoints), // Pass combinedPoints here
         ],
       ),
     );
@@ -266,59 +246,150 @@ class HomePageActivities extends StatelessWidget {
     );
   }
 
-  Widget _buildRedeemSection(BuildContext context, int combinedPoints) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(
-            colors: [Colors.green[400]!, Colors.green[600]!]),
+  Widget _buildTabSection(BuildContext context, int combinedPoints) {
+    return Column(
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _buildTabItem(context, 'Activities', 0, Colors.orange, Colors.orange[100]!),
+              _buildTabItem(context, 'Voucher', 1, Colors.green, Colors.green[100]!),
+            ],
+          ),
+        ),
+        SizedBox(height: 20),
+        IndexedStack(
+          index: _selectedIndex,
+          children: [
+            _buildActivitiesTab(context),
+            _buildVoucherTab(context, combinedPoints),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabItem(BuildContext context, String title, int index, Color color, Color backgroundColor) {
+    return GestureDetector(
+      onTap: () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 4.0),
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        decoration: BoxDecoration(
+          color: _selectedIndex == index ? color : backgroundColor,
+          borderRadius: BorderRadius.circular(20.0),
+          border: Border.all(color: color),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: _selectedIndex == index ? Colors.white : color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
-      child: Column(
-        children: [
-          _buildIconContainer(
-            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/coupon.gif?alt=media&token=4b180f0f-67db-48e9-b467-07f5fbafebbc',
-            70.0,
-          ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RedeemVoucherPage(
-                          userId: _auth.currentUser!.uid,
-                          initialPoints: combinedPoints)));
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.qr_code, color: Colors.white, size: 20),
-                SizedBox(width: 10),
-                Text('Redeem Now',
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Colors.white)),
-                SizedBox(width: 10),
-                Icon(Icons.arrow_forward, color: Colors.white, size: 20),
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
-          Text('Use this QR code when you checkout to get points',
-              style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: Colors.white),
-              textAlign: TextAlign.center),
+    );
+  }
+
+  Widget _buildActivitiesTab(BuildContext context) {
+    return Column(
+      children: [
+        _buildOptionCard(
+          context,
+          'View Catalog of Activities',
+          'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/list.gif?alt=media&token=c9bbc1c3-5cfb-4fe5-879d-73004afcea65', // URL directly used
+          'Explore various activities to promote zero waste and earn more points.',
+          () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ZeroWasteActivities())),
+          Colors.green[600]!,
+          Colors.green[900]!,
+        ),
+        SizedBox(height: 20), // Add spacing between sections
+        _buildOptionCard(
+          context,
+          'Review Activities Status',
+          'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/no_task.gif?alt=media&token=cfdc586e-5068-4b98-b563-540ebce5f32f', // Add a suitable URL for the icon
+          'Check the status of your submitted activities.',
+          () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ReviewTaskStatusPage())), // Navigate to the new page
+          Colors.orange[400]!,
+          Colors.orange[900]!,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVoucherTab(BuildContext context, int combinedPoints) {
+    return Column(
+      children: [
+        _buildRedeemSection(context, combinedPoints), // Use combinedPoints here
+        SizedBox(height: 20), // Add spacing between sections
+        _buildOptionCard(
+          context,
+          'View Voucher Status',
+          'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/coupon.gif?alt=media&token=4b180f0f-67db-48e9-b467-07f5fbafebbc', // Add a suitable URL for the icon
+          'Check the status of your redeemed vouchers.',
+          () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => RedeemVoucherPage(
+                      userId: _auth.currentUser!.uid,
+                      initialPoints: combinedPoints))), // Navigate to the voucher status page
+          Colors.blue[400]!,
+          Colors.blue[900]!,
+        ),
+      ],
+    );
+  }
+
+  BoxDecoration _buildBoxDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 7,
+            offset: Offset(0, 3))
+      ],
+      gradient: LinearGradient(
+        colors: [Colors.lightGreenAccent[100]!, Colors.green[200]!],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    );
+  }
+
+  Widget _buildIconContainer(String gifUrl, double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 7,
+              offset: Offset(0, 3))
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.network(gifUrl, fit: BoxFit.cover),
       ),
     );
   }
@@ -376,43 +447,59 @@ class HomePageActivities extends StatelessWidget {
     );
   }
 
-  BoxDecoration _buildBoxDecoration() {
-    return BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 7,
-            offset: Offset(0, 3))
-      ],
-      gradient: LinearGradient(
-        colors: [Colors.lightGreenAccent[100]!, Colors.green[200]!],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    );
-  }
-
-  Widget _buildIconContainer(String gifUrl, double size) {
+  Widget _buildRedeemSection(BuildContext context, int combinedPoints) {
     return Container(
-      width: size,
-      height: size,
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 7,
-              offset: Offset(0, 3))
-        ],
+        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+            colors: [Colors.green[400]!, Colors.green[600]!]),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Image.network(gifUrl, fit: BoxFit.cover),
+      child: Column(
+        children: [
+          _buildIconContainer(
+            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/coupon.gif?alt=media&token=4b180f0f-67db-48e9-b467-07f5fbafebbc',
+            70.0,
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RedeemVoucherPage(
+                          userId: _auth.currentUser!.uid,
+                          initialPoints: combinedPoints)));
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.qr_code, color: Colors.white, size: 20),
+                SizedBox(width: 10),
+                Text('Redeem Now',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white)),
+                SizedBox(width: 10),
+                Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          Text('Use this QR code when you checkout to get points',
+              style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: Colors.white),
+              textAlign: TextAlign.center),
+        ],
       ),
     );
   }

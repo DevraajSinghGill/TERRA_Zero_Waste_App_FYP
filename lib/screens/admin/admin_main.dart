@@ -54,6 +54,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set scaffold background color to white
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -119,7 +120,22 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No tasks.'));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/no_task.gif?alt=media&token=cfdc586e-5068-4b98-b563-540ebce5f32f',
+                          height: 150,
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'No Pending Tasks',
+                          style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp),
+                        ),
+                      ],
+                    ),
+                  );
                 }
 
                 final tasks = snapshot.data!.docs;
@@ -278,4 +294,3 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
     );
   }
 }
-

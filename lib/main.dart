@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/chatbot/consts.dart';
 import 'package:terra_zero_waste_app/constants/app_colors.dart';
 import 'package:terra_zero_waste_app/controllers/comment_controller.dart';
 import 'package:terra_zero_waste_app/controllers/post_controller.dart';
 import 'package:terra_zero_waste_app/controllers/user_controller.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_manage/admin_task_controller.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/task_group_provider.dart';
 import 'package:terra_zero_waste_app/screens/splash/splash_screen.dart';
 import 'package:terra_zero_waste_app/controllers/image_controller.dart';
@@ -23,7 +21,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Gemini.init(apiKey: GEMENI_API_KEY);
-  Get.put(AdminTaskController());
   runApp(const MyApp());
 }
 

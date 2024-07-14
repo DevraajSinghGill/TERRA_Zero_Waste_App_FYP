@@ -4,10 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_task/admin_main_pending.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_main.dart';
 import 'package:terra_zero_waste_app/screens/admin/admin_profle_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_task/admin_approved_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_task/admin_rejected_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_approved_page.dart';
 import 'package:terra_zero_waste_app/screens/admin/admin_qr_page.dart';
 import 'package:terra_zero_waste_app/screens/auth/login_screen.dart';
 
@@ -114,7 +113,7 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
                 tabs: [
                   GButton(
                     icon: Icons.apps,
-                    text: 'Pending',
+                    text: 'Tasks',
                     textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
                   ),
                   GButton(
@@ -143,9 +142,9 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
   String getAppTitle(int currentIndex) {
     switch (currentIndex) {
       case 0:
-        return "Pending Tasks";
+        return "Home";
       case 1:
-        return "QR Code";
+        return "Chat";
       case 2:
         return "Profile";
       default:

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
-import 'package:terra_zero_waste_app/gamification/review_task/approved_page_user.dart';
-import 'package:terra_zero_waste_app/gamification/review_task/pending_page_user.dart';
-import 'package:terra_zero_waste_app/gamification/review_task/rejected_page_user.dart';
 
 class ReviewTaskStatusPage extends StatefulWidget {
   @override
@@ -10,42 +9,116 @@ class ReviewTaskStatusPage extends StatefulWidget {
 }
 
 class _ReviewTaskStatusPageState extends State<ReviewTaskStatusPage> {
-  String selectedStatus = 'Pending';
+  int selectedIndex = 0;
+  final List<String> statuses = ['Pending', 'Approved', 'Rejected'];
+  User? currentUser;
 
-  Widget _buildStatusButton(String label, String status) {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          selectedStatus = status;
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        foregroundColor: selectedStatus == status ? Colors.white : Colors.teal,
-        backgroundColor: selectedStatus == status ? Colors.green[700] : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(
-        label,
-        style: AppTextStyles.nunitoSemiBod.copyWith(
-          color: selectedStatus == status ? Colors.white : Colors.green[700],
-          fontSize: 12, // Smaller font size
-        ),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    currentUser = FirebaseAuth.instance.currentUser;
   }
 
-  Widget _buildStatusPage() {
-    switch (selectedStatus) {
-      case 'Approved':
-        return ApprovedPage();
-      case 'Rejected':
-        return RejectedPage();
-      case 'Pending':
-      default:
-        return PendingPage();
+  Stream<QuerySnapshot> _fetchTasks(String status) {
+    if (currentUser == null) {
+      return Stream.empty();
     }
+    return FirebaseFirestore.instance
+        .collection('pendingTasks')
+        .where('uid', isEqualTo: currentUser!.uid)
+        .where('status', isEqualTo: status.toLowerCase())
+        .snapshots();
+  }
+
+  Color _getToggleColor(int index) {
+    switch (statuses[index].toLowerCase()) {
+      case 'approved':
+        return Colors.green[700]!;
+      case 'rejected':
+        return Colors.red[700]!;
+      case 'pending':
+      default:
+        return Colors.yellow[700]!;
+    }
+  }
+
+  Widget _buildTaskList(Stream<QuerySnapshot> taskStream) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: taskStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Something went wrong'));
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Center(child: Text('No tasks found'));
+        }
+
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            DocumentSnapshot document = snapshot.data!.docs[index];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+            return Card(
+              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 5,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Center(child: Image.network(data['icon'], height: 50)),
+                    SizedBox(height: 10),
+                    Text(
+                      data['task'],
+                      style: AppTextStyles.nunitoBold.copyWith(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Create and use your own cleaning products using natural ingredients.',
+                      style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Submitted on: ${data['completionDate']}',
+                          style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12, color: Colors.black),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '${data['points']} pts',
+                            style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -65,71 +138,87 @@ class _ReviewTaskStatusPageState extends State<ReviewTaskStatusPage> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: 10), // Space between the app bar and the box
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              child: Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(height: 10), // Space between the app bar and the box
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            child: Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage('https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/review_user.jpg?alt=media&token=faad5325-8cc5-474e-983a-8c5de0233fb9'),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage('https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/review_user.jpg?alt=media&token=faad5325-8cc5-474e-983a-8c5de0233fb9'),
-                        fit: BoxFit.cover,
-                      ),
+                      color: Colors.black.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Review and Approve Tasks',
-                            style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 16),
-                          ),
-                          SizedBox(height: 30),
-                          Text(
-                            'Here you can review the status of your completed task. Your pending task will be either approved or rejected and displayed here.',
-                            style: AppTextStyles.nunitoRegular.copyWith(color: Colors.white, fontSize: 14),
-                          ),
-                        ],
-                      ),
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Review and Approve Tasks',
+                          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 16),
+                        ),
+                        SizedBox(height: 30),
+                        Text(
+                          'Here you can review the status of your completed task. Your pending task will be either approved or rejected and displayed here.',
+                          style: AppTextStyles.nunitoRegular.copyWith(color: Colors.white, fontSize: 14),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            SizedBox(height: 20),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildStatusButton('Pending', 'Pending'),
-                  SizedBox(width: 10),
-                  _buildStatusButton('Approved', 'Approved'),
-                  SizedBox(width: 10),
-                  _buildStatusButton('Rejected', 'Rejected'),
-                ],
-              ),
+          ),
+          SizedBox(height: 20),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ToggleButtons(
+              borderRadius: BorderRadius.circular(20),
+              fillColor: _getToggleColor(selectedIndex),
+              selectedColor: Colors.white,
+              color: Colors.teal,
+              selectedBorderColor: _getToggleColor(selectedIndex),
+              borderColor: Colors.teal,
+              isSelected: statuses.map((status) => statuses[selectedIndex] == status).toList(),
+              onPressed: (int index) {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
+              children: statuses.map((status) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Text(
+                    status,
+                    style: AppTextStyles.nunitoSemiBod.copyWith(
+                      fontSize: 14, 
+                      color: statuses[selectedIndex] == status ? Colors.white : Colors.black, 
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
-            SizedBox(height: 20),
-            _buildStatusPage(), // Display the appropriate page based on the selected status
-          ],
-        ),
+          ),
+          SizedBox(height: 20),
+          Expanded(
+            child: _buildTaskList(_fetchTasks(statuses[selectedIndex])),
+          ),
+        ],
       ),
       backgroundColor: Colors.white,
     );

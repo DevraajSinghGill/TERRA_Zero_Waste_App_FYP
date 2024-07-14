@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/gamification/redeem_voucher_page.dart';
+import 'package:terra_zero_waste_app/gamification/review_task/review_task_status_page.dart';
 import 'package:terra_zero_waste_app/gamification/total_points_page.dart';
 import 'package:terra_zero_waste_app/gamification/zero_waste_activities.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -154,8 +155,21 @@ class HomePageActivities extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ZeroWasteActivities())),
-            Colors.green[800]!,
+            Colors.green[600]!,
             Colors.green[900]!,
+          ),
+          SizedBox(height: 20), // Add spacing between sections
+          _buildOptionCard(
+            context,
+            'Review Task Status',
+            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/no_task.gif?alt=media&token=cfdc586e-5068-4b98-b563-540ebce5f32f', // Add a suitable URL for the icon
+            'Check the status of your submitted tasks.',
+            () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ReviewTaskStatusPage())), // Navigate to the new page
+            Colors.orange[400]!,
+            Colors.orange[900]!,
           ),
           SizedBox(height: 20),
           _buildRedeemSection(context, combinedPoints),
@@ -352,7 +366,7 @@ class HomePageActivities extends StatelessWidget {
               Text(description,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: Colors.white70)),
             ],

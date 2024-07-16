@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/gamification/redeem_voucher_page.dart';
 import 'package:terra_zero_waste_app/gamification/review_task/review_task_status_page.dart';
-import 'package:terra_zero_waste_app/gamification/total_points_page.dart';
+import 'package:terra_zero_waste_app/gamification/review_voucher/review_voucher_page_user.dart';
 import 'package:terra_zero_waste_app/gamification/zero_waste_activities.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -95,22 +94,8 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
 
     await for (var userDocSnapshot in userDocStream) {
       if (userDocSnapshot.exists) {
-        int totalPoints = (userDocSnapshot.data() as Map<String, dynamic>)['totalPoints']?.toInt() ?? 0;
-
-        await for (var tasksSnapshot in tasksStream) {
-          int taskPoints = 0;
-          for (var doc in tasksSnapshot.docs) {
-            Map<String, dynamic> taskData = doc.data() as Map<String, dynamic>;
-            taskPoints += (taskData['points'] ?? 0) as int;
-          }
-
-          int combinedPoints = totalPoints + taskPoints;
-
-          // Save the combined points back to Firestore
-          await _firestore.collection('users').doc(userId).update({'combinedPoints': combinedPoints});
-
-          yield combinedPoints;
-        }
+        int combinedPoints = (userDocSnapshot.data() as Map<String, dynamic>)['combinedPoints']?.toInt() ?? 0;
+        yield combinedPoints;
       } else {
         yield 0;
       }
@@ -247,15 +232,37 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
   }
 
   Widget _buildTabSection(BuildContext context, int combinedPoints) {
+    List<String> statuses = ["Activities", "Voucher"];
     return Column(
       children: [
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              _buildTabItem(context, 'Activities', 0, Colors.orange, Colors.orange[100]!),
-              _buildTabItem(context, 'Voucher', 1, Colors.green, Colors.green[100]!),
-            ],
+          child: ToggleButtons(
+            borderRadius: BorderRadius.circular(20),
+            fillColor: _getToggleColor(_selectedIndex),
+            selectedColor: Colors.white,
+            color: Colors.teal,
+            selectedBorderColor: _getToggleColor(_selectedIndex),
+            borderColor: Colors.teal,
+            isSelected: statuses.map((status) => statuses[_selectedIndex] == status).toList(),
+            onPressed: (int index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            children: statuses.map((status) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Text(
+                  status,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    color: statuses[_selectedIndex] == status ? Colors.white : Colors.black,
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ),
         SizedBox(height: 20),
@@ -270,32 +277,8 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
     );
   }
 
-  Widget _buildTabItem(BuildContext context, String title, int index, Color color, Color backgroundColor) {
-    return GestureDetector(
-      onTap: () {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        });
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 4.0),
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: _selectedIndex == index ? color : backgroundColor,
-          borderRadius: BorderRadius.circular(20.0),
-          border: Border.all(color: color),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: _selectedIndex == index ? Colors.white : color,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
+  Color _getToggleColor(int selectedIndex) {
+    return selectedIndex == 0 ? Colors.orange : Colors.green;
   }
 
   Widget _buildActivitiesTab(BuildContext context) {
@@ -337,15 +320,13 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
         SizedBox(height: 20), // Add spacing between sections
         _buildOptionCard(
           context,
-          'View Voucher Status',
-          'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/coupon.gif?alt=media&token=4b180f0f-67db-48e9-b467-07f5fbafebbc', // Add a suitable URL for the icon
+          'Review Voucher Status',
+          'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/no_task.gif?alt=media&token=cfdc586e-5068-4b98-b563-540ebce5f32f', // Add a suitable URL for the icon
           'Check the status of your redeemed vouchers.',
           () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => RedeemVoucherPage(
-                      userId: _auth.currentUser!.uid,
-                      initialPoints: combinedPoints))), // Navigate to the voucher status page
+                  builder: (context) => ReviewVoucherStatusPage())), // Navigate to the voucher status page
           Colors.blue[400]!,
           Colors.blue[900]!,
         ),
@@ -431,14 +412,14 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
               Text(title,
                   style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w700,
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Colors.white)),
               SizedBox(height: 8),
               Text(description,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                      fontSize: 12,
                       color: Colors.white70)),
             ],
           ),
@@ -473,9 +454,10 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Increased padding for a bigger button
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -485,7 +467,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
                 Text('Redeem Now',
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w700,
-                        fontSize: 16,
+                        fontSize: 14,
                         color: Colors.white)),
                 SizedBox(width: 10),
                 Icon(Icons.arrow_forward, color: Colors.white, size: 20),
@@ -496,7 +478,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
           Text('Use this QR code when you checkout to get points',
               style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w400,
-                  fontSize: 14,
+                  fontSize: 12,
                   color: Colors.white),
               textAlign: TextAlign.center),
         ],

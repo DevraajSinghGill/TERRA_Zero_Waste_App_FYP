@@ -104,7 +104,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                         SizedBox(height: 10),
                         Text(
                           data['description'] ?? '',
-                          style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14.sp),
+                          style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 20),
@@ -126,7 +126,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                           alignment: Alignment.bottomLeft,
                           child: Text(
                             'Submitted on: ${_formatTimestamp(data['timestamp'])}',
-                            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp),
+                            style: AppTextStyles.nunitoRegular.copyWith(fontSize: 10.sp),
                           ),
                         ),
                         if (data['approvalTimestamp'] != null)
@@ -134,7 +134,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                             alignment: Alignment.bottomLeft,
                             child: Text(
                               'Approved on: ${_formatTimestamp(data['approvalTimestamp'])}',
-                              style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp),
+                              style: AppTextStyles.nunitoRegular.copyWith(fontSize: 10.sp),
                             ),
                           ),
                         if (data['rejectionTimestamp'] != null)
@@ -142,7 +142,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                             alignment: Alignment.bottomLeft,
                             child: Text(
                               'Rejected on: ${_formatTimestamp(data['rejectionTimestamp'])}',
-                              style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp),
+                              style: AppTextStyles.nunitoRegular.copyWith(fontSize: 10.sp),
                             ),
                           ),
                       ],

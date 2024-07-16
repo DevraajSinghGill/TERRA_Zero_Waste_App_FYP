@@ -18,6 +18,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
     try {
       await FirebaseFirestore.instance.collection('pendingTasks').doc(taskId).update({
         'status': 'approved',
+        'approvalTimestamp': FieldValue.serverTimestamp(), // Add approval timestamp
       });
     } catch (e) {
       print('Error approving task: $e');
@@ -28,13 +29,15 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
     try {
       await FirebaseFirestore.instance.collection('pendingTasks').doc(taskId).update({
         'status': 'rejected',
+        'rejectionTimestamp': FieldValue.serverTimestamp(), // Add rejection timestamp
       });
     } catch (e) {
       print('Error rejecting task: $e');
     }
   }
 
-  String _formatTimestamp(Timestamp timestamp) {
+  String _formatTimestamp(Timestamp? timestamp) {
+    if (timestamp == null) return 'N/A';
     var format = DateFormat('yyyy-MM-dd HH:mm'); // Use any format you prefer
     return format.format(timestamp.toDate());
   }
@@ -355,6 +358,22 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
                                         style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp),
                                       ),
                                     ),
+                                    if (data['approvalTimestamp'] != null)
+                                      Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Text(
+                                          'Approved on: ${_formatTimestamp(data['approvalTimestamp'])}',
+                                          style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp),
+                                        ),
+                                      ),
+                                    if (data['rejectionTimestamp'] != null)
+                                      Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Text(
+                                          'Rejected on: ${_formatTimestamp(data['rejectionTimestamp'])}',
+                                          style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ],

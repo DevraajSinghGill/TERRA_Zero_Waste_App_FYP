@@ -4,9 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_main.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_task_review_page.dart';
 import 'package:terra_zero_waste_app/screens/admin/admin_profle_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_approved_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_voucher_review_page.dart';
 import 'package:terra_zero_waste_app/screens/auth/login_screen.dart';
 
 class AdminPage extends StatefulWidget {
@@ -25,7 +25,7 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
 
   final List<Widget> screensList = [
     const AdminPendingPage(),
-    const AdminApprovedPage(),
+    const AdminVoucherRedemptionPage(),
     const AdminProfilePage(),
   ];
 
@@ -116,8 +116,8 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
                     textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
                   ),
                   GButton(
-                    icon: Icons.qr_code,
-                    text: 'QR Code',
+                    icon: Icons.view_agenda,
+                    text: 'Vouchers',
                     textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
                   ),
                   GButton(
@@ -141,11 +141,11 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
   String getAppTitle(int currentIndex) {
     switch (currentIndex) {
       case 0:
-        return "Home";
+        return "Review Tasks";
       case 1:
-        return "Chat";
+        return "Review Vouchers";
       case 2:
-        return "Profile";
+        return "Admin Profile";
       default:
         return "";
     }

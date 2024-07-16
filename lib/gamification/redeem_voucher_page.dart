@@ -1,10 +1,4 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,8 +15,6 @@ class RedeemVoucherPage extends StatefulWidget {
 
 class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
   late int totalPoints;
-  String data = '';
-  final GlobalKey _qrkey = GlobalKey();
 
   @override
   void initState() {
@@ -30,237 +22,90 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
     totalPoints = widget.initialPoints;
   }
 
-  Future<void> _captureAndSavePng() async {
+  Future<void> _redeemVoucher(BuildContext context, String title, int points, String iconPath, String description) async {
+    final redeemVoucherCollection = FirebaseFirestore.instance.collection('redeemVoucherRequests');
+    
     try {
-      RenderRepaintBoundary boundary =
-          _qrkey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      var image = await boundary.toImage(pixelRatio: 3.0);
-
-      final whitePaint = Paint()..color = Colors.white;
-      final recorder = PictureRecorder();
-      final canvas = Canvas(recorder,
-          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()));
-      canvas.drawRect(
-          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
-          whitePaint);
-      canvas.drawImage(image, Offset.zero, Paint());
-      final picture = recorder.endRecording();
-      final img = await picture.toImage(image.width, image.height);
-      ByteData? byteData = await img.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
-
-      final directory = await getApplicationDocumentsDirectory();
-      final path = '${directory.path}/qr_code.png';
-
-      final file = await File(path).create();
-      await file.writeAsBytes(pngBytes);
-
-      if (!mounted) return;
-      const snackBar = SnackBar(content: Text('QR code saved to gallery'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } catch (e) {
-      if (!mounted) return;
-      const snackBar = SnackBar(content: Text('Something went wrong!!!'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-  }
-
-  Future<void> _redeemVoucher(BuildContext context, int points) async {
-    final userDoc = FirebaseFirestore.instance.collection('users').doc(widget.userId);
-    try {
-      await FirebaseFirestore.instance.runTransaction((transaction) async {
-        final snapshot = await transaction.get(userDoc);
-
-        if (!snapshot.exists) {
-          throw Exception("User does not exist!");
-        }
-
-        final currentPoints = snapshot.get('combinedPoints');
-        if (currentPoints < points) {
-          throw Exception("Not enough points!");
-        }
-
-        transaction.update(userDoc, {'combinedPoints': currentPoints - points});
-        setState(() {
-          totalPoints = currentPoints - points;
-        });
+      await redeemVoucherCollection.add({
+        'userId': widget.userId,
+        'title': title,
+        'points': points,
+        'iconPath': iconPath,
+        'description': description,
+        'status': 'pending',
+        'timestamp': FieldValue.serverTimestamp(),
       });
 
+      _showPendingApprovalDialog(context, title);
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Voucher redeemed successfully!'),
-        backgroundColor: Colors.teal[800],
+        content: Text('Failed to submit request: $e'),
+        backgroundColor: Colors.red,
       ));
-
-      setState(() {
-        data = DateTime.now().millisecondsSinceEpoch.toString();
-      });
-
-      _showQRCodeBottomSheet(context);
-    } catch (e) {
-      if (e.toString().contains("Not enough points")) {
-        _showErrorDialog(context, "Not enough points", "You do not have enough points to redeem this voucher.");
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-        ));
-      }
     }
   }
 
-  void _showQRCodeBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.80,
-          minChildSize: 0.25,
-          maxChildSize: 1.0,
-          expand: false,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: Container(
-                padding: EdgeInsets.all(12.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(12.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            offset: Offset(0, 4),
-                            blurRadius: 10.0,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Scan this QR Code to redeem your voucher',
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Present this QR code at the participating outlet to avail your voucher benefits.',
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10.sp,
-                              color: Colors.grey[700],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    RepaintBoundary(
-                      key: _qrkey,
-                      child: QrImageView(
-                        data: data,
-                        version: QrVersions.auto,
-                        size: 250.0,
-                        gapless: true,
-                        errorStateBuilder: (ctx, err) {
-                          return const Center(
-                            child: Text(
-                              'Something went wrong!!!',
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    RawMaterialButton(
-                      onPressed: _captureAndSavePng,
-                      fillColor: Colors.teal[800],
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
-                      child: const Text(
-                        'Export',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal[800],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                      ),
-                      child: Text(
-                        'CLOSE',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 12.sp,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _showErrorDialog(BuildContext context, String title, String message) {
+  void _showPendingApprovalDialog(BuildContext context, String title) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w900,
-              fontSize: 14.sp,
-            ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
           ),
-          content: Text(
-            message,
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w400,
-              fontSize: 12.sp,
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                "OK",
+          contentPadding: EdgeInsets.all(12.0),
+          backgroundColor: Colors.white, // Set background color to white
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.network(
+                'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/pending_task.gif?alt=media&token=fdd5bd7e-a8a5-4d90-a80c-197035a28399',
+                height: 150,
+                width: 150,
+              ),
+              SizedBox(height: 15),
+              Text(
+                'Voucher Redemption Pending Approval',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w900,
                   fontSize: 14.sp,
-                  color: Colors.teal[800],
+                  color: Colors.black, // Set text color to black
+                ),
+                textAlign: TextAlign.center, // Center the text
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Your voucher redemption for "$title" is pending approval.',
+                textAlign: TextAlign.center, // Center the text
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 10.sp,
+                  color: Colors.black, // Set text color to black
                 ),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+              SizedBox(height: 15),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                ),
+                child: Text(
+                  'CLOSE',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 12.sp,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -446,6 +291,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                         fontSize: 14.sp,
                         color: Colors.black,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 6),
                     Text(
@@ -455,6 +301,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                         fontSize: 12.sp,
                         color: Colors.black54,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -464,14 +311,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  try {
-                    await _redeemVoucher(context, points);
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(e.toString()),
-                      backgroundColor: Colors.red,
-                    ));
-                  }
+                  _redeemVoucher(context, title, points, gifPath, description);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal[800],

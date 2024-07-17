@@ -9,6 +9,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   firebase_storage
   permission_handler_windows
+  qr_code_to_image
   rive_common
   url_launcher_windows
 )

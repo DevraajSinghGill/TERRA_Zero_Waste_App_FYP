@@ -4,9 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
+import 'package:terra_zero_waste_app/gamification/review_voucher/review_voucher_page_user.dart';
 import 'package:terra_zero_waste_app/screens/admin/admin_task_review_page.dart';
 import 'package:terra_zero_waste_app/screens/admin/admin_profle_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_voucher_review_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_verify_voucher.dart';
 import 'package:terra_zero_waste_app/screens/auth/login_screen.dart';
 
 class AdminPage extends StatefulWidget {
@@ -25,7 +26,8 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
 
   final List<Widget> screensList = [
     const AdminPendingPage(),
-    const AdminVoucherRedemptionPage(),
+    ReviewVoucherStatusPage(),
+    AdminVerifyVoucherPage(),
     const AdminProfilePage(),
   ];
 
@@ -117,7 +119,12 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
                   ),
                   GButton(
                     icon: Icons.view_agenda,
-                    text: 'Vouchers',
+                    text: 'Redeem',
+                    textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
+                  ),
+                  GButton(
+                    icon: Icons.wallet_rounded,
+                    text: 'Verify',
                     textStyle: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp, color: Colors.white),
                   ),
                   GButton(
@@ -145,6 +152,8 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
       case 1:
         return "Review Vouchers";
       case 2:
+        return "Verify Vouchers";
+      case 3:
         return "Admin Profile";
       default:
         return "";

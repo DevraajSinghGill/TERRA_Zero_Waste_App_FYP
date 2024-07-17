@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
-import 'package:intl/intl.dart'; // For date formatting
 
 class ReviewVoucherStatusPage extends StatefulWidget {
   @override
@@ -19,6 +21,21 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
   void initState() {
     super.initState();
     currentUser = FirebaseAuth.instance.currentUser;
+  }
+
+  // Add the PIN generation function here
+  String _generatePIN() {
+    final random = Random();
+    const length = 6; // Length of the PIN
+    const chars = '1234567890';
+    return List.generate(length, (index) => chars[random.nextInt(chars.length)]).join();
+  }
+
+  // Example function to add a voucher
+  Future<void> _addVoucher(Map<String, dynamic> voucherData) async {
+    final pin = _generatePIN();
+    voucherData['pin'] = pin;
+    await FirebaseFirestore.instance.collection('redeemVoucherRequests').add(voucherData);
   }
 
   Stream<QuerySnapshot> _fetchTasks(String status) {
@@ -42,6 +59,37 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
       default:
         return Colors.yellow[700]!;
     }
+  }
+
+  void _showPINBottomSheet(BuildContext context, Map<String, dynamic> data) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Voucher PIN',
+                style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'PIN: ${data['pin']}',
+                style: AppTextStyles.nunitoBold.copyWith(fontSize: 24.sp, color: Colors.red),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Provide this PIN to the admin for voucher validation.',
+                style: AppTextStyles.nunitoRegular.copyWith(fontSize: 14.sp),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildTaskList(Stream<QuerySnapshot> taskStream) {
@@ -78,10 +126,10 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
               elevation: 6, // Add depth
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
                   children: [
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.center, // Center the content
                       children: [
                         if (data['iconPath'] != null)
                           Center(
@@ -100,26 +148,13 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                         Text(
                           data['title'],
                           style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp),
+                          textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 10),
                         Text(
                           data['description'] ?? '',
                           style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12.sp),
                           textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 20),
-                        Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              '${data['points']} pts',
-                              style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp),
-                            ),
-                          ),
                         ),
                         SizedBox(height: 10),
                         Align(
@@ -145,7 +180,45 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                               style: AppTextStyles.nunitoRegular.copyWith(fontSize: 10.sp),
                             ),
                           ),
+                        if (statuses[selectedIndex].toLowerCase() == 'approved')
+                          Column(
+                            children: [
+                              SizedBox(height: 10),
+                              Center(
+                                child: ElevatedButton.icon(
+                                  onPressed: () => _showPINBottomSheet(context, data),
+                                  icon: Icon(Icons.pin),
+                                  label: Text(
+                                    'Generate PIN',
+                                    style: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp, color: Colors.white),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white, backgroundColor: Colors.orange, // Set the text color to white
+                                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                       ],
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${data['points']} pts',
+                          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -182,7 +255,10 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
     );
   }
 
-  String _formatTimestamp(Timestamp timestamp) {
+  String _formatTimestamp(Timestamp? timestamp) {
+    if (timestamp == null) {
+      return 'Unknown';
+    }
     DateTime dateTime = timestamp.toDate();
     return DateFormat('yyyy-MM-dd – kk:mm').format(dateTime);
   }
@@ -190,20 +266,6 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: Text(
-          'Review Voucher Status',
-          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

@@ -12,6 +12,7 @@
 #include <firebase_core/firebase_core_plugin_c_api.h>
 #include <firebase_storage/firebase_storage_plugin_c_api.h>
 #include <permission_handler_windows/permission_handler_windows_plugin.h>
+#include <qr_code_to_image/qr_code_to_image_plugin_c_api.h>
 #include <rive_common/rive_plugin.h>
 #include <url_launcher_windows/url_launcher_windows.h>
 
@@ -28,6 +29,8 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FirebaseStoragePluginCApi"));
   PermissionHandlerWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PermissionHandlerWindowsPlugin"));
+  QrCodeToImagePluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("QrCodeToImagePluginCApi"));
   RivePluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("RivePlugin"));
   UrlLauncherWindowsRegisterWithRegistrar(

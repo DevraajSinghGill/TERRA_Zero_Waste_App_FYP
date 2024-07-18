@@ -266,6 +266,17 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Review Voucher Status',
+          style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp, color: Colors.white),
+        ),
+        backgroundColor: Colors.green[800],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

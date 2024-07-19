@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/gamification/review_voucher/review_voucher_page_user.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_task_review_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_profle_page.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_verify_voucher.dart';
-import 'package:terra_zero_waste_app/screens/admin/admin_voucher_review_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_nav_bar/admin_task_review_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_nav_bar/admin_profle_page.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_nav_bar/admin_verify_voucher.dart';
+import 'package:terra_zero_waste_app/screens/admin/admin_nav_bar/admin_voucher_review_page.dart';
 import 'package:terra_zero_waste_app/screens/auth/login_screen.dart';
 
 class AdminPage extends StatefulWidget {

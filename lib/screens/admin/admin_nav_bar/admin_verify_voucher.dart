@@ -42,12 +42,18 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
           return;
         }
 
+        if (data['isVerified'] == true) {
+          _showErrorDialog('This voucher has already been verified.');
+          return;
+        }
+
         if (data['status'] == 'approved') {
           setState(() {
             voucherData = data;
           });
           username = await _getUsername(data['userId']);
           _showVoucherInfo();
+          await _updateVoucherField('isVerified', true); // Mark voucher as verified
         } else {
           _showErrorDialog('This voucher is not approved.');
         }
@@ -207,10 +213,11 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
               child: ElevatedButton(
                 onPressed: _verifyVoucher,
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0), backgroundColor: Colors.blue, // Make button bigger
+                  padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0), // Make button bigger
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                  ), // Button color
+                  ),
+                  backgroundColor: Colors.blue, // Button color
                 ),
                 child: Text(
                   'Verify Voucher',
@@ -342,7 +349,10 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
           actions: [
             Center(
               child: TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  _clearTextFields(); // Clear the text fields
+                  Navigator.of(context).pop();
+                },
                 child: Container(
                   color: Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -357,5 +367,14 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
         );
       },
     );
+  }
+
+  void _clearTextFields() {
+    for (var controller in _controllers) {
+      controller.clear();
+    }
+    setState(() {
+      _isFilled.fillRange(0, _isFilled.length, false);
+    });
   }
 }

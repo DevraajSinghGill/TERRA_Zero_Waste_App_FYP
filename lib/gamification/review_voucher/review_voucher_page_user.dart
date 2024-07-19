@@ -23,7 +23,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
     currentUser = FirebaseAuth.instance.currentUser;
   }
 
-  // Add the PIN generation function here
+  // Generate PIN function
   String _generatePIN() {
     final random = Random();
     const length = 6; // Length of the PIN
@@ -31,7 +31,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
     return List.generate(length, (index) => chars[random.nextInt(chars.length)]).join();
   }
 
-  // Example function to add a voucher
+  // Example function to add a voucher with PIN
   Future<void> _addVoucher(Map<String, dynamic> voucherData) async {
     final pin = _generatePIN();
     voucherData['pin'] = pin;
@@ -61,7 +61,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
     }
   }
 
-  void _showPINBottomSheet(BuildContext context, Map<String, dynamic> data) {
+  void _showPINBottomSheet(BuildContext context, String pin) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -76,7 +76,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
               ),
               SizedBox(height: 20),
               Text(
-                'PIN: ${data['pin']}',
+                'PIN: $pin',
                 style: AppTextStyles.nunitoBold.copyWith(fontSize: 24.sp, color: Colors.red),
               ),
               SizedBox(height: 20),
@@ -186,10 +186,10 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                               SizedBox(height: 10),
                               Center(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => _showPINBottomSheet(context, data),
+                                  onPressed: () => _showPINBottomSheet(context, data['pin']),
                                   icon: Icon(Icons.pin),
                                   label: Text(
-                                    'Generate PIN',
+                                    'Show PIN',
                                     style: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp, color: Colors.white),
                                   ),
                                   style: ElevatedButton.styleFrom(

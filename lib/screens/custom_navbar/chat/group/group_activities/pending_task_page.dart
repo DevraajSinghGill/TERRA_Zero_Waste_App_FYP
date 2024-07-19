@@ -3,11 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/edit_task_page.dart';
-import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_activities/group_task_card.dart';
 import 'task_group_provider.dart';
 import 'task_group.dart';
 
 class PendingTasksPage extends StatelessWidget {
+  final String userId; // Add user ID
+
+  PendingTasksPage({required this.userId});
+
   void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -77,6 +80,9 @@ class PendingTasksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Set the user ID in the provider
+    Provider.of<TaskProvider>(context, listen: false).setUserId(userId);
+
     return Scaffold(
       body: Container(
         color: Colors.white, // Set background color to white
@@ -217,5 +223,3 @@ class PendingTasksPage extends StatelessWidget {
     );
   }
 }
-
-

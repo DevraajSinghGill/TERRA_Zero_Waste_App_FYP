@@ -22,9 +22,17 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   final TextEditingController msgController = TextEditingController();
 
   bool _isLoading = false;
+
+  // Dummy function to simulate getting the user ID
+  // Replace this with your actual logic to get the user ID
+  String getUserId() {
+    return "exampleUserId"; // Replace with actual user ID retrieval logic
+  }
+
   @override
   Widget build(BuildContext context) {
     final imageController = Provider.of<ImageController>(context);
+    final userId = getUserId(); // Get the user ID
 
     return Scaffold(
       appBar: AppBar(
@@ -36,12 +44,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           IconButton(
             icon: Icon(
               Icons.group_rounded,
-              size: 30.0, 
+              size: 30.0,
             ),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => GroupActivitiesPage(groupId: widget.groupId)),
+                MaterialPageRoute(builder: (context) => GroupActivitiesPage(groupId: widget.groupId, userId: userId)), // Pass the user ID
               );
             },
           ),

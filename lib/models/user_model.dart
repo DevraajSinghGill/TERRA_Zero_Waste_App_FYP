@@ -10,8 +10,6 @@ class UserModel {
   final List following;
   final List savePosts;
   final DateTime memberSince;
-  final String role;
-  final int combinedPoints; // Add this field
 
   const UserModel({
     required this.userId,
@@ -22,9 +20,7 @@ class UserModel {
     required this.followers,
     required this.following,
     required this.savePosts,
-    required this.memberSince,
-    required this.role,
-    this.combinedPoints = 300, // Default to 300 points
+    required this.memberSince, required String role,
   });
 
   Map<String, dynamic> toMap() {
@@ -32,14 +28,12 @@ class UserModel {
       'userId': this.userId,
       'username': this.username,
       'email': this.email,
-      'about': this.about,
+      'about': about,
       'image': this.image,
       'followers': this.followers,
       'following': this.following,
       'savePosts': this.savePosts,
       'memberSince': this.memberSince,
-      'role': this.role,
-      'combinedPoints': this.combinedPoints, // Include in the map
     };
   }
 
@@ -55,7 +49,6 @@ class UserModel {
       savePosts: map['savePosts'] as List,
       memberSince: (map['memberSince'].toDate()),
       role: map['role'] as String,
-      combinedPoints: map['combinedPoints'] ?? 300, // Default to 300 if not present
     );
   }
 }

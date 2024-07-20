@@ -55,11 +55,8 @@ class AuthServices extends ChangeNotifier {
           savePosts: [],
           memberSince: DateTime.now(),
           role: 'user', // Default role as user
-          combinedPoints: 300, // Set initial points to 300
         );
-
         await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set(userModel.toMap());
-
         Provider.of<LoadingController>(context, listen: false).setLoading(false);
         
         // Redirect based on role

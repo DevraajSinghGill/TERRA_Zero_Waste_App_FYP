@@ -7,18 +7,15 @@ class TaskProvider with ChangeNotifier {
   List<Task> _pendingTasks = [];
   List<Task> _completedTasks = [];
   String? _groupId;
-  String? _userId; // Variable to store user ID
 
   List<Task> get pendingTasks => _pendingTasks;
   List<Task> get completedTasks => _completedTasks;
 
+  TaskProvider() {}
+
   void setGroupId(String groupId) {
     _groupId = groupId;
     fetchTasks();
-  }
-
-  void setUserId(String userId) {
-    _userId = userId;
   }
 
   Future<void> fetchTasks() async {
@@ -46,21 +43,11 @@ class TaskProvider with ChangeNotifier {
   }
 
   Future<void> completeTask(Task task) async {
-    if (_groupId == null || _userId == null) return;
+    if (_groupId == null) return;
 
-    // Update task status to completed
     await _firestore.collection('groupChats').doc(_groupId).collection('tasks').doc(task.id).update({'status': 'completed'});
     _pendingTasks.remove(task);
     _completedTasks.add(task);
-
-    // Fetch the current combined points for the user
-    final userDoc = await _firestore.collection('users').doc(_userId).get();
-    int currentCombinedPoints = userDoc.data()?['combinedPoints'] ?? 0;
-
-    // Update the combined points
-    int updatedCombinedPoints = currentCombinedPoints + task.points;
-    await _firestore.collection('users').doc(_userId).update({'combinedPoints': updatedCombinedPoints});
-
     notifyListeners();
   }
 

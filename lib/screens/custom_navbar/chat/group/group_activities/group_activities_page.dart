@@ -8,12 +8,14 @@ import 'package:terra_zero_waste_app/screens/custom_navbar/chat/group/group_acti
 
 class GroupActivitiesPage extends StatelessWidget {
   final String groupId;
+  final String userId;
 
-  const GroupActivitiesPage({Key? key, required this.groupId}) : super(key: key);
+  const GroupActivitiesPage({Key? key, required this.groupId, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Provider.of<TaskProvider>(context, listen: false).setGroupId(groupId);
+    Provider.of<TaskProvider>(context, listen: false).setUserId(userId);
 
     return DefaultTabController(
       length: 2, // Number of tabs
@@ -61,7 +63,7 @@ class GroupActivitiesPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            PendingTasksPage(),
+            PendingTasksPage(userId: userId), // Pass userId here
             CompletedTasksPage(),
           ],
         ),

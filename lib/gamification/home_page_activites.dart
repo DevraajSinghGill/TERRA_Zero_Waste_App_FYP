@@ -462,7 +462,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.qr_code, color: Colors.white, size: 20),
+                Icon(Icons.pin_rounded, color: Colors.white, size: 20),
                 SizedBox(width: 10),
                 Text('Redeem Now',
                     style: GoogleFonts.poppins(
@@ -475,7 +475,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
             ),
           ),
           SizedBox(height: 10),
-          Text('Use this QR code when you checkout to get points',
+          Text('Use this PIN to check out points',
               style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w400,
                   fontSize: 12,

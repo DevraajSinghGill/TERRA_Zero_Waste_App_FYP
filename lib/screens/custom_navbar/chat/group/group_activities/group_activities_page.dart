@@ -14,8 +14,9 @@ class GroupActivitiesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TaskProvider>(context, listen: false).setGroupId(groupId);
-    Provider.of<TaskProvider>(context, listen: false).setUserId(userId);
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    taskProvider.setGroupId(groupId);
+    taskProvider.setUserId(userId);
 
     return DefaultTabController(
       length: 2, // Number of tabs
@@ -45,16 +46,14 @@ class GroupActivitiesPage extends StatelessWidget {
               Tab(
                 child: Text(
                   'Pending',
-                  style: AppTextStyles.nunitoRegular.copyWith(
-                      color: Colors.white, fontSize: 12),
+                  style: AppTextStyles.nunitoRegular.copyWith(color: Colors.white, fontSize: 12),
                 ),
                 icon: Icon(Icons.pending_actions, color: Colors.white),
               ),
               Tab(
                 child: Text(
                   'Completed',
-                  style: AppTextStyles.nunitoRegular.copyWith(
-                      color: Colors.white, fontSize: 12),
+                  style: AppTextStyles.nunitoRegular.copyWith(color: Colors.white, fontSize: 12),
                 ),
                 icon: Icon(Icons.check_circle, color: Colors.white),
               ),
@@ -63,7 +62,7 @@ class GroupActivitiesPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            PendingTasksPage(userId: userId), // Pass userId here
+            PendingTasksPage(userId: userId),
             CompletedTasksPage(),
           ],
         ),

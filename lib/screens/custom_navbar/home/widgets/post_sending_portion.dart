@@ -44,7 +44,7 @@ class _PostSendingPortionState extends State<PostSendingPortion> {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Image.network('https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/message_icon.gif?alt=media&token=86587cfb-ca20-4cde-ba73-d0b16a4404cb', width: 50.w, height: 50.h),
+                            Image.network('https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/message_icon.gif?alt=media&token=b823a499-4255-46f1-b5de-b72e11368d63', width: 50.w, height: 50.h),
                             SizedBox(width: 16),
                             Text(
                               "Send Post",

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/constants/app_colors.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/controllers/image_controller.dart';
@@ -20,32 +19,6 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
-  String? _imageIconUrl;
-  String? _captionIconUrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadGifIcons();
-  }
-
-  Future<void> _loadGifIcons() async {
-    try {
-      String imageIconUrl = await FirebaseStorage.instance
-          .ref('image_icon.gif') // replace with your file path in Firebase Storage
-          .getDownloadURL();
-      String captionIconUrl = await FirebaseStorage.instance
-          .ref('caption_icon.gif') // replace with your file path in Firebase Storage
-          .getDownloadURL();
-      setState(() {
-        _imageIconUrl = imageIconUrl;
-        _captionIconUrl = captionIconUrl;
-      });
-    } catch (e) {
-      print('Error loading GIF icons: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final imageController = Provider.of<ImageController>(context);
@@ -60,13 +33,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
               SizedBox(height: 20.h), // Add space before the "Select Image" text
               Row(
                 children: [
-                  _imageIconUrl != null
-                      ? Image.network(
-                          _imageIconUrl!,
-                          height: 50.h,
-                          width: 50.w,
-                        )
-                      : CircularProgressIndicator(),
+                  Image.network(
+                    'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/image_icon.gif?alt=media&token=95a5e3f3-c5f0-4692-a620-c438cda95634',
+                    height: 50.h,
+                    width: 50.w,
+                  ),
                   SizedBox(width: 10.w),
                   Text("Select Image", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
                 ],
@@ -81,13 +52,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
               SizedBox(height: 20.h),
               Row(
                 children: [
-                  _captionIconUrl != null
-                      ? Image.network(
-                          _captionIconUrl!,
-                          height: 50.h,
-                          width: 50.w,
-                        )
-                      : CircularProgressIndicator(),
+                  Image.network(
+                    'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/caption_icon.gif?alt=media&token=e1993d7e-61a5-415c-b23a-20e3e06f80c2',
+                    height: 50.h,
+                    width: 50.w,
+                  ),
                   SizedBox(width: 10.w),
                   Text("Add Caption", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
                 ],

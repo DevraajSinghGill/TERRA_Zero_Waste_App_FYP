@@ -29,7 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final imageController = Provider.of<ImageController>(context);
     final size = MediaQuery.of(context).size;
-    
+
     return Scaffold(
       body: Stack(
         children: [
@@ -88,9 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         });
                       },
                       child: Icon(
-                          _isVisible
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                          _isVisible ? Icons.visibility_off : Icons.visibility,
                           size: 20.r,
                           color: AppColors.primaryGrey),
                     ),
@@ -136,10 +134,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     image: imageController.selectedImage,
                                     username: AppTextController
                                         .usernameController.text,
-                                    about: AppTextController
-                                        .aboutController.text,
-                                    email: AppTextController
-                                        .emailController.text,
+                                    about:
+                                        AppTextController.aboutController.text,
+                                    email:
+                                        AppTextController.emailController.text,
                                     password: AppTextController
                                         .passwordController.text,
                                     confirmPassword: AppTextController
@@ -201,7 +199,7 @@ class GoogleSignInButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Sign in with',
+              'Sign Up with',
               style: AppTextStyles.nunitoBold
                   .copyWith(color: AppColors.primaryColor),
             ),

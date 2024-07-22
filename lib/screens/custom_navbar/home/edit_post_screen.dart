@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/constants/app_colors.dart';
 import 'package:terra_zero_waste_app/constants/app_text_styles.dart';
 import 'package:terra_zero_waste_app/controllers/image_controller.dart';
@@ -27,36 +26,16 @@ class _EditPostScreenState extends State<EditPostScreen> {
   final TextEditingController _captionController = TextEditingController();
   List _images = [];
   List<File> _newImageList = [];
-  String? _imageIconUrl;
-  String? _captionIconUrl;
 
   @override
   void initState() {
     super.initState();
     _captionController.text = widget.postModel.caption;
     getImagesFromDb();
-    _loadGifIcons();
   }
 
   Future<void> getImagesFromDb() async {
     _images = widget.postModel.postImages!;
-  }
-
-  Future<void> _loadGifIcons() async {
-    try {
-      String imageIconUrl = await FirebaseStorage.instance
-          .ref('image_icon.gif') // Replace with your file path in Firebase Storage
-          .getDownloadURL();
-      String captionIconUrl = await FirebaseStorage.instance
-          .ref('caption_icon.gif') // Replace with your file path in Firebase Storage
-          .getDownloadURL();
-      setState(() {
-        _imageIconUrl = imageIconUrl;
-        _captionIconUrl = captionIconUrl;
-      });
-    } catch (e) {
-      print('Error loading GIF icons: $e');
-    }
   }
 
   @override
@@ -67,7 +46,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
         title: Text("Edit Post", style: AppTextStyles.nunitoBold.copyWith(fontSize: 20.sp, color: Colors.white)),
       ),
       body: SingleChildScrollView(
-        child: Padding(
+        child: Container(
+          color: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,13 +55,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
               SizedBox(height: 20), // Added space
               Row(
                 children: [
-                  _imageIconUrl != null
-                      ? Image.network(
-                          _imageIconUrl!,
-                          height: 40.h,
-                          width: 40.w,
-                        )
-                      : CircularProgressIndicator(),
+                  Image.network(
+                    'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/image_icon.gif?alt=media&token=95a5e3f3-c5f0-4692-a620-c438cda95634',
+                    height: 50.h,
+                    width: 50.w,
+                  ),
                   SizedBox(width: 10),
                   Text("Select Image", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp)),
                 ],
@@ -247,13 +225,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
               SizedBox(height: 20), // Additional space
               Row(
                 children: [
-                  _captionIconUrl != null
-                      ? Image.network(
-                          _captionIconUrl!,
-                          height: 40.h,
-                          width: 40.w,
-                        )
-                      : CircularProgressIndicator(),
+                  Image.network(
+                    'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/caption_icon.gif?alt=media&token=e1993d7e-61a5-415c-b23a-20e3e06f80c2',
+                    height: 50.h,
+                    width: 50.w,
+                  ),
                   SizedBox(width: 10),
                   Text("Add Caption", style: AppTextStyles.nunitoBold.copyWith(fontSize: 16.sp)),
                 ],

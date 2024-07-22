@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:terra_zero_waste_app/chatbot/chatbot_page.dart';
 import 'package:terra_zero_waste_app/constants/app_assets.dart';
 import 'package:terra_zero_waste_app/constants/app_colors.dart';
@@ -82,7 +81,7 @@ class CustomDrawerWidget extends StatelessWidget {
               child: ListView(
                 children: [
                   CustomListTile(
-                    iconPath: 'edit_profile_icon.gif', // Replace with your file path in Firebase Storage
+                    iconUrl: 'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/edit_profile_icon.gif?alt=media&token=28e3bf3e-68e8-4ec6-8604-bc7badb7420e',
                     title: "Edit Profile",
                     onPressed: () {
                       Get.to(() => EditProfileScreen(
@@ -90,14 +89,14 @@ class CustomDrawerWidget extends StatelessWidget {
                     },
                   ),
                   CustomListTile(
-                    iconPath: 'chatbot_icon.gif', 
+                    iconUrl: 'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/chatbot_icon.gif?alt=media&token=23207baa-125c-4c92-a423-a694f2708fab',
                     title: "TERRA Chatbot",
                     onPressed: () {
                       Get.to(() => ChatbotPage());
                     },
                   ),
                   CustomListTile(
-                    iconPath: 'earth_banner_icon.gif', 
+                    iconUrl: 'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/earth_banner_icon.gif?alt=media&token=4102ccf2-e0b9-4fe0-85aa-1ceed9c76d3d',
                     title: "TERRA Activities",
                     onPressed: () {
                       Get.to(() => HomePageActivities());
@@ -106,7 +105,7 @@ class CustomDrawerWidget extends StatelessWidget {
                   SizedBox(height: 180.h), // Added space here
                   Divider(color: Colors.grey[300]),
                   CustomListTile(
-                    iconPath: 'log_out_icon.gif', 
+                    iconUrl: 'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/log_out_icon.gif?alt=media&token=149a4ceb-df64-4a05-914a-a7f06a395fd1',
                     title: "LogOut",
                     onPressed: () {
                       showCustomAlertDialog(
@@ -128,58 +127,30 @@ class CustomDrawerWidget extends StatelessWidget {
   }
 }
 
-class CustomListTile extends StatefulWidget {
-  final String iconPath;
+class CustomListTile extends StatelessWidget {
+  final String iconUrl;
   final String title;
   final VoidCallback onPressed;
 
   const CustomListTile({
-    required this.iconPath,
+    required this.iconUrl,
     required this.title,
     required this.onPressed,
   });
 
   @override
-  _CustomListTileState createState() => _CustomListTileState();
-}
-
-class _CustomListTileState extends State<CustomListTile> {
-  String? _iconUrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadGifIcon();
-  }
-
-  Future<void> _loadGifIcon() async {
-    try {
-      String url = await FirebaseStorage.instance
-          .ref(widget.iconPath)
-          .getDownloadURL();
-      setState(() {
-        _iconUrl = url;
-      });
-    } catch (e) {
-      print('Error loading GIF icon: $e');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: _iconUrl != null
-          ? Image.network(
-              _iconUrl!,
-              width: 48.w,
-              height: 48.h,
-            )
-          : CircularProgressIndicator(),
+      leading: Image.network(
+        iconUrl,
+        width: 48.w,
+        height: 48.h,
+      ),
       title: Text(
-        widget.title,
+        title,
         style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp),
       ),
-      onTap: widget.onPressed,
+      onTap: onPressed,
     );
   }
 }

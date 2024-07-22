@@ -454,7 +454,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Increased padding for a bigger button
+              padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 16.0), // Increased padding for a bigger button
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -475,7 +475,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
             ),
           ),
           SizedBox(height: 10),
-          Text('Use this PIN to check out points',
+          Text('View the catalog of avaliable voucher and redeem!',
               style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w400,
                   fontSize: 12,

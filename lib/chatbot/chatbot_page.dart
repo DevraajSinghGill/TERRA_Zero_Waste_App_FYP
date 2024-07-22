@@ -19,7 +19,6 @@ class ChatbotPage extends StatefulWidget {
 
 class _HomePageState extends State<ChatbotPage> {
   late Gemini gemini;
-  String? _gifIconUrl;
   List<ChatMessage> messages = [];
 
   ChatUser currentUser = ChatUser(id: "0", firstName: "User");
@@ -34,20 +33,6 @@ class _HomePageState extends State<ChatbotPage> {
   void initState() {
     super.initState();
     gemini = Gemini.instance; // Direct initialization
-    _loadGifIcon();
-  }
-
-  Future<void> _loadGifIcon() async {
-    try {
-      String url = await FirebaseStorage.instance
-          .ref('chatbot_icon.gif') // Replace with your file path in Firebase Storage
-          .getDownloadURL();
-      setState(() {
-        _gifIconUrl = url;
-      });
-    } catch (e) {
-      print('Error loading GIF icon: $e');
-    }
   }
 
   @override
@@ -120,13 +105,11 @@ class _HomePageState extends State<ChatbotPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _gifIconUrl != null
-              ? Image.network(
-                  _gifIconUrl!,
-                  height: 150,
-                  width: 150,
-                )
-              : CircularProgressIndicator(),
+          Image.network(
+            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/chatbot_icon.gif?alt=media&token=23207baa-125c-4c92-a423-a694f2708fab',
+            height: 150,
+            width: 150,
+          ),
           SizedBox(height: 20),
           Text(
             "Chat with a Chatbot!",

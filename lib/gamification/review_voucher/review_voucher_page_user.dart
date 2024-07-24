@@ -146,7 +146,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                           ),
                         SizedBox(height: 10),
                         Text(
-                          data['title'],
+                          data['title'] ?? 'No Title', // Ensure title is a string or provide a default value
                           style: AppTextStyles.nunitoBold.copyWith(fontSize: 18.sp),
                           textAlign: TextAlign.center,
                         ),
@@ -186,7 +186,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                               SizedBox(height: 10),
                               Center(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => _showPINBottomSheet(context, data['pin']),
+                                  onPressed: () => _showPINBottomSheet(context, data['pin'].toString()), // Ensure pin is converted to String
                                   icon: Icon(Icons.pin),
                                   label: Text(
                                     'Show PIN',
@@ -215,7 +215,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          '${data['points']} pts',
+                          '${data['points'].toString()} pts', // Ensure points is converted to String
                           style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 14.sp),
                         ),
                       ),

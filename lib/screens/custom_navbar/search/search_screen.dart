@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -61,17 +62,27 @@ class _SearchScreenState extends State<SearchScreen> {
                         ],
                       ),
                     )
-                  : ListView.builder(
-                      itemCount: userController.allUserList.length,
-                      itemBuilder: (context, index) {
-                        UserModel userModel = userController.allUserList[index];
-                        if (userModel.username.toLowerCase().contains(_searchController.text.toLowerCase())) {
-                          return UserSearchCard(userModel: userModel);
-                        } else {
-                          return SizedBox();
+                  : StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance.collection('users').snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
-                      },
-                    ),
+
+                        return ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            UserModel userModel = UserModel.fromMap(snapshot.data!.docs[index]);
+                            if (userModel.username.toLowerCase().contains(_searchController.text.toLowerCase())) {
+                              return UserSearchCard(userModel: userModel);
+                            } else {
+                              return SizedBox();
+                            }
+                          },
+                        );
+                      }),
             ),
           ],
         ),

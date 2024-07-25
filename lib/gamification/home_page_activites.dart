@@ -102,8 +102,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
     }
   }
 
-  Scaffold _buildScaffoldWithAppBar(BuildContext context, String title,
-      {required Widget body}) {
+  Scaffold _buildScaffoldWithAppBar(BuildContext context, String title, {required Widget body}) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -125,8 +124,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
     );
   }
 
-  Widget _buildUserInterface(
-      BuildContext context, String formattedName, int combinedPoints) {
+  Widget _buildUserInterface(BuildContext context, String formattedName, int combinedPoints) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -386,6 +384,7 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: double.infinity, // Ensure the container takes full width
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
@@ -429,59 +428,83 @@ class _HomePageActivitiesState extends State<HomePageActivities> {
   }
 
   Widget _buildRedeemSection(BuildContext context, int combinedPoints) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(
-            colors: [Colors.green[400]!, Colors.green[600]!]),
-      ),
-      child: Column(
-        children: [
-          _buildIconContainer(
-            'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/coupon.gif?alt=media&token=4b180f0f-67db-48e9-b467-07f5fbafebbc',
-            70.0,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RedeemVoucherPage(
+              userId: _auth.currentUser!.uid,
+              initialPoints: combinedPoints,
+            ),
           ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RedeemVoucherPage(
-                          userId: _auth.currentUser!.uid,
-                          initialPoints: combinedPoints)));
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 16.0), // Increased padding for a bigger button
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+        );
+      },
+      child: Container(
+        width: double.infinity, // Ensure the container takes full width
+        margin: EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(
+            colors: [Colors.green[400]!, Colors.green[600]!],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 0,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            _buildIconContainer(
+              'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/coupon.gif?alt=media&token=4b180f0f-67db-48e9-b467-07f5fbafebbc',
+              70.0,
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RedeemVoucherPage(
+                            userId: _auth.currentUser!.uid,
+                            initialPoints: combinedPoints)));
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 16.0), // Increased padding for a bigger button
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.pin_rounded, color: Colors.white, size: 20),
+                  SizedBox(width: 10),
+                  Text('Redeem Now',
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: Colors.white)),
+                  SizedBox(width: 10),
+                  Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.pin_rounded, color: Colors.white, size: 20),
-                SizedBox(width: 10),
-                Text('Redeem Now',
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                        color: Colors.white)),
-                SizedBox(width: 10),
-                Icon(Icons.arrow_forward, color: Colors.white, size: 20),
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
-          Text('View the catalog of avaliable voucher and redeem!',
-              style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                  color: Colors.white),
-              textAlign: TextAlign.center),
-        ],
+            SizedBox(height: 10),
+            Text('View the catalog of available voucher and redeem!',
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                    color: Colors.white),
+                textAlign: TextAlign.center),
+          ],
+        ),
       ),
     );
   }

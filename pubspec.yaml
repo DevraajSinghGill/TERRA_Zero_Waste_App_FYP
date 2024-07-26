@@ -113,18 +113,7 @@ flutter:
   assets:
 
    - lib/assets/images/background_login_page.jpg
-   - lib/assets/images/qr_code.png
 
-   - lib/assets/images/composting_task.jpg
-   - lib/assets/images/reusable_bag.jpg
-   - lib/assets/images/carpool.jpg
-   - lib/assets/images/donation.jpg
-   - lib/assets/images/public_transport.jpg
-   - lib/assets/images/tank_water.jpg
-   - lib/assets/images/water_bottle.jpg
-   - lib/assets/images/cleaning.jpg
-   - lib/assets/images/meal_plan.jpg
-   - lib/assets/images/green_vege.jpg
    - lib/assets/images/voucher.jpg
    - lib/assets/images/gardening.jpg
    - lib/assets/images/person.png

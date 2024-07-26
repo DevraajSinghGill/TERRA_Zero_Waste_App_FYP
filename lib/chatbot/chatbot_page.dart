@@ -24,9 +24,9 @@ class _HomePageState extends State<ChatbotPage> {
   ChatUser currentUser = ChatUser(id: "0", firstName: "User");
   ChatUser geminiUser = ChatUser(
     id: "1",
-    firstName: "Gemini",
+    firstName: "TERRA Chatbot",
     profileImage:
-        "https://seeklogo.com/images/G/google-gemini-logo-A5787B2669-seeklogo.com.png",
+        "https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/organic_splash.gif?alt=media&token=573e4fe7-8012-45b0-a724-8a924cb790cb",
   );
 
   @override
@@ -57,15 +57,6 @@ class _HomePageState extends State<ChatbotPage> {
           color: Colors.white, // Set background color to white
           child: DashChat(
             inputOptions: InputOptions(
-              trailing: [
-                IconButton(
-                  onPressed: _sendMediaMessage,
-                  icon: const Icon(
-                    Icons.image,
-                  ),
-                  iconSize: 40, // Increase the size of the icon
-                ),
-              ],
               inputDecoration: InputDecoration(
                 hintText: 'Type your message here...',
                 hintStyle: AppTextStyles.nunitoRegular.copyWith(fontSize: 14),
@@ -172,28 +163,6 @@ class _HomePageState extends State<ChatbotPage> {
       });
     } catch (e) {
       print(e);
-    }
-  }
-
-  void _sendMediaMessage() async {
-    ImagePicker picker = ImagePicker();
-    XFile? file = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (file != null) {
-      ChatMessage chatMessage = ChatMessage(
-        user: currentUser,
-        createdAt: DateTime.now(),
-        text: "Describe this picture?",
-        medias: [
-          ChatMedia(
-            url: file.path,
-            fileName: "",
-            type: MediaType.image,
-          )
-        ],
-      );
-      _sendMessage(chatMessage);
     }
   }
 }

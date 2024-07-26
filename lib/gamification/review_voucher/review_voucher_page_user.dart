@@ -31,7 +31,7 @@ class _ReviewVoucherStatusPageState extends State<ReviewVoucherStatusPage> {
     return List.generate(length, (index) => chars[random.nextInt(chars.length)]).join();
   }
 
-  // Example function to add a voucher with PIN
+
   Future<void> _addVoucher(Map<String, dynamic> voucherData) async {
     final pin = _generatePIN();
     voucherData['pin'] = pin;

@@ -14,11 +14,27 @@ class AdminPendingPage extends StatefulWidget {
 class _AdminPendingPageState extends State<AdminPendingPage> {
   String selectedStatus = 'pending';
 
-  Future<void> _approveTask(String taskId) async {
+  Future<void> _approveTask(String taskId, String uid, int points) async {
     try {
-      await FirebaseFirestore.instance.collection('pendingTasks').doc(taskId).update({
-        'status': 'approved',
-        'approvalTimestamp': FieldValue.serverTimestamp(), // Add approval timestamp
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference taskRef = FirebaseFirestore.instance.collection('pendingTasks').doc(taskId);
+        DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+
+        DocumentSnapshot userSnapshot = await transaction.get(userRef);
+
+        if (userSnapshot.exists) {
+          int currentPoints = userSnapshot['combinedPoints'] ?? 0;
+          int newPoints = currentPoints + points;
+
+          transaction.update(taskRef, {
+            'status': 'approved',
+            'approvalTimestamp': FieldValue.serverTimestamp(), // Add approval timestamp
+          });
+
+          transaction.update(userRef, {
+            'combinedPoints': newPoints,
+          });
+        }
       });
     } catch (e) {
       print('Error approving task: $e');
@@ -84,7 +100,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
     }
   }
 
-  void _showConfirmationDialog(String taskId, String action) {
+  void _showConfirmationDialog(String taskId, String action, String uid, int points) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -127,7 +143,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (action == 'approve') {
-                        _approveTask(taskId);
+                        _approveTask(taskId, uid, points);
                       } else {
                         _rejectTask(taskId);
                       }
@@ -251,6 +267,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
                     final task = tasks[index];
                     final data = task.data() as Map<String, dynamic>;
                     final uid = data['uid'];
+                    final points = data['points'];
 
                     return FutureBuilder(
                       future: _getUsername(uid),
@@ -313,7 +330,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           ElevatedButton(
-                                            onPressed: () => _showConfirmationDialog(task.id, 'approve'),
+                                            onPressed: () => _showConfirmationDialog(task.id, 'approve', uid, points),
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.green,
                                               shape: RoundedRectangleBorder(
@@ -324,7 +341,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
                                           ),
                                           SizedBox(width: 20),
                                           ElevatedButton(
-                                            onPressed: () => _showConfirmationDialog(task.id, 'reject'),
+                                            onPressed: () => _showConfirmationDialog(task.id, 'reject', uid, points),
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.red,
                                               shape: RoundedRectangleBorder(

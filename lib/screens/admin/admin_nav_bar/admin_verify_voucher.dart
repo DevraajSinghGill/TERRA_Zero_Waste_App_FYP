@@ -109,7 +109,26 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
 
   Future<void> _markVoucherAsRedeemed() async {
     try {
-      await _updateVoucherField('isRedeemed', true);
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference voucherRef = FirebaseFirestore.instance.collection('redeemVoucherRequests').doc(voucherData!['pin'].toString());
+        DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(voucherData!['userId']);
+
+        DocumentSnapshot userSnapshot = await transaction.get(userRef);
+
+        if (userSnapshot.exists) {
+          int currentPoints = (userSnapshot['combinedPoints'] ?? 0).toInt();
+          int voucherPoints = (voucherData!['points'] ?? 0).toInt();
+          int newPoints = currentPoints - voucherPoints;
+
+          transaction.update(voucherRef, {
+            'isRedeemed': true,
+          });
+
+          transaction.update(userRef, {
+            'combinedPoints': newPoints,
+          });
+        }
+      });
     } catch (e) {
       print('Error marking voucher as redeemed: $e');
     }

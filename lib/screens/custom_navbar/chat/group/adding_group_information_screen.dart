@@ -31,7 +31,7 @@ class _AddingGroupInformationScreenState extends State<AddingGroupInformationScr
       appBar: AppBar(
         title: Text(
           "Add Group Information",
-          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 20), // Custom font style for AppBar
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white, fontSize: 20), 
         ),
       ),
       body: Padding(

@@ -23,14 +23,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
   Widget build(BuildContext context) {
     final imageController = Provider.of<ImageController>(context);
     return Scaffold(
-      backgroundColor: Colors.white, // Set the background color to white
+      backgroundColor: Colors.white, 
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20.h), // Add space before the "Select Image" text
+              SizedBox(height: 20.h), 
               Row(
                 children: [
                   Image.network(
@@ -42,7 +42,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Text("Select Image", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
                 ],
               ),
-              SizedBox(height: 5.h), // Add space before the description text
+              SizedBox(height: 5.h), 
               Text(
                 "Choose an image from your gallery or take a new one.",
                 style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12, color: Colors.grey[900]),
@@ -61,7 +61,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Text("Add Caption", style: AppTextStyles.nunitoBold.copyWith(fontSize: 14)),
                 ],
               ),
-              SizedBox(height: 5.h), // Add space before the description text
+              SizedBox(height: 5.h), 
               Text(
                 "Write a caption for your post.",
                 style: AppTextStyles.nunitoRegular.copyWith(fontSize: 12, color: Colors.grey[900]),

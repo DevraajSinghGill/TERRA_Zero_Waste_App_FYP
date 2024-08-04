@@ -32,7 +32,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         ),
       ),
       body: Container(
-        color: Colors.white, // Set background color to white
+        color: Colors.white, 
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Form(
@@ -42,7 +42,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
               children: [
                 Image.network(
                   'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/create_task.gif?alt=media&token=fef3fa40-cc9c-4c2c-8833-3a1e3f0584a6',
-                  height: 150, // Adjusted the height to make it bigger
+                  height: 150, 
                 ),
                 SizedBox(height: 16.0),
                 Text(

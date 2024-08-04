@@ -28,7 +28,7 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
       print('Entered PIN: $pin');
       final querySnapshot = await FirebaseFirestore.instance
           .collection('redeemVoucherRequests')
-          .where('pin', isEqualTo: int.parse(pin)) // Ensure the pin is a number
+          .where('pin', isEqualTo: int.parse(pin)) 
           .get();
 
       if (querySnapshot.docs.isEmpty) {
@@ -53,7 +53,7 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
           });
           username = await _getUsername(data['userId']);
           _showVoucherInfo();
-          await _updateVoucherField('isVerified', true); // Mark voucher as verified
+          await _updateVoucherField('isVerified', true); 
         } else {
           _showErrorDialog('This voucher is not approved.');
         }
@@ -232,11 +232,11 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
               child: ElevatedButton(
                 onPressed: _verifyVoucher,
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0), // Make button bigger
+                  padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0), 
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
-                  backgroundColor: Colors.blue, // Button color
+                  backgroundColor: Colors.blue, 
                 ),
                 child: Text(
                   'Verify Voucher',
@@ -299,7 +299,7 @@ class _AdminVerifyVoucherPageState extends State<AdminVerifyVoucherPage> {
             GestureDetector(
               onTap: () async {
                 await _markVoucherAsRedeemed();
-                Navigator.of(context).pop(); // Close the bottom sheet
+                Navigator.of(context).pop(); 
                 _showCongratulationsDialog();
               },
               child: Container(

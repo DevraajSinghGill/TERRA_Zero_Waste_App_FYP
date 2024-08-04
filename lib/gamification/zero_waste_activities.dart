@@ -77,7 +77,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
                       'task': doc['task'],
                       'points': doc['points'],
                       'icon': doc['icon'],
-                      'completionDate': doc['completionDate'], // Add completionDate
+                      'completionDate': doc['completionDate'], 
                     })
                 .toList();
           });
@@ -85,7 +85,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
       }
     } catch (e) {
       print('Error fetching user data: $e');
-      // Handle error accordingly (e.g., show a message to the user)
+      
     }
   }
 
@@ -100,14 +100,14 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
             'description': data['description'] ?? 'No Description',
             'iconPath': data['iconPath'] ?? 'https://example.com/default-icon.png',
             'points': data['points'] ?? 0,
-            'days': List<String>.from(data['days'] ?? []), // Fetch days field
+            'days': List<String>.from(data['days'] ?? []), 
           };
         }).toList();
       });
       print('Fetched activities: $activities');
     } catch (e) {
       print('Error fetching activities: $e');
-      // Handle error accordingly (e.g., show a message to the user)
+      
     }
   }
 
@@ -136,7 +136,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
       _saveTaskToPending(user.uid, task, points, iconPath, todayDate, username!);
       _showPendingApprovalDialog(task, points);
     } else {
-      // Prompt user to sign in
+
       print('User not signed in');
     }
   }
@@ -210,7 +210,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
             borderRadius: BorderRadius.circular(15),
           ),
           contentPadding: EdgeInsets.all(12.0),
-          backgroundColor: Colors.white, // Set background color to white
+          backgroundColor: Colors.white, 
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -225,7 +225,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w900,
                   fontSize: 14.sp,
-                  color: Colors.black, // Set text color to black
+                  color: Colors.black, 
                 ),
               ),
               SizedBox(height: 8),
@@ -235,7 +235,7 @@ class _ZeroWasteActivitiesState extends State<ZeroWasteActivities> with SingleTi
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   fontSize: 10.sp,
-                  color: Colors.black, // Set text color to black
+                  color: Colors.black,
                 ),
               ),
               SizedBox(height: 15),

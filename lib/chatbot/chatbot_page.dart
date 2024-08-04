@@ -32,18 +32,18 @@ class _HomePageState extends State<ChatbotPage> {
   @override
   void initState() {
     super.initState();
-    gemini = Gemini.instance; // Direct initialization
+    gemini = Gemini.instance; 
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set background color to white
+      backgroundColor: Colors.white, 
       appBar: AppBar(
         centerTitle: true,
         title: Text(
           "TERRA Chatbot",
-          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white), // Set the text color to white
+          style: AppTextStyles.nunitoBold.copyWith(color: Colors.white), 
         ),
       ),
       body: _buildUI(),
@@ -54,7 +54,7 @@ class _HomePageState extends State<ChatbotPage> {
     return Stack(
       children: [
         Container(
-          color: Colors.white, // Set background color to white
+          color: Colors.white, 
           child: DashChat(
             inputOptions: InputOptions(
               inputDecoration: InputDecoration(

@@ -44,9 +44,9 @@ class _AdminVoucherRedemptionPageState
           .update({
         'status': 'approved',
         'approvalTimestamp':
-            FieldValue.serverTimestamp(), // Add approval timestamp
+            FieldValue.serverTimestamp(), 
       });
-      _fetchAllVouchers(); // Refresh the data
+      _fetchAllVouchers(); 
     } catch (e) {
       print('Error approving redemption: $e');
     }
@@ -60,9 +60,9 @@ class _AdminVoucherRedemptionPageState
           .update({
         'status': 'rejected',
         'rejectionTimestamp':
-            FieldValue.serverTimestamp(), // Add rejection timestamp
+            FieldValue.serverTimestamp(), 
       });
-      _fetchAllVouchers(); // Refresh the data
+      _fetchAllVouchers(); 
     } catch (e) {
       print('Error rejecting redemption: $e');
     }

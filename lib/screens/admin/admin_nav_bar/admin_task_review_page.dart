@@ -28,7 +28,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
 
           transaction.update(taskRef, {
             'status': 'approved',
-            'approvalTimestamp': FieldValue.serverTimestamp(), // Add approval timestamp
+            'approvalTimestamp': FieldValue.serverTimestamp(), 
           });
 
           transaction.update(userRef, {
@@ -45,7 +45,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
     try {
       await FirebaseFirestore.instance.collection('pendingTasks').doc(taskId).update({
         'status': 'rejected',
-        'rejectionTimestamp': FieldValue.serverTimestamp(), // Add rejection timestamp
+        'rejectionTimestamp': FieldValue.serverTimestamp(), 
       });
     } catch (e) {
       print('Error rejecting task: $e');
@@ -54,7 +54,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
 
   String _formatTimestamp(Timestamp? timestamp) {
     if (timestamp == null) return 'N/A';
-    var format = DateFormat('yyyy-MM-dd HH:mm'); // Use any format you prefer
+    var format = DateFormat('yyyy-MM-dd HH:mm'); 
     return format.format(timestamp.toDate());
   }
 
@@ -124,7 +124,7 @@ class _AdminPendingPageState extends State<AdminPendingPage> {
                   margin: const EdgeInsets.symmetric(vertical: 4.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop(); // Close the dialog
+                      Navigator.of(context).pop(); 
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,

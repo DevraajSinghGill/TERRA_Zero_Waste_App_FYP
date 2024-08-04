@@ -40,7 +40,7 @@ class UserChatCard extends StatelessWidget {
                 ),
           title: Text(
             userModel.username,
-            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp), // Adjust font size here
+            style: AppTextStyles.nunitoSemiBod.copyWith(fontSize: 12.sp), 
           ),
           subtitle: Text(
             data['msg'],

@@ -114,7 +114,7 @@ class _EditAdminProfilePageState extends State<EditAdminProfilePage> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.blue, // Set the app bar color
+        backgroundColor: Colors.blue, 
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

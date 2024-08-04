@@ -23,16 +23,15 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   bool _isLoading = false;
 
-  // Dummy function to simulate getting the user ID
-  // Replace this with your actual logic to get the user ID
+
   String getUserId() {
-    return "exampleUserId"; // Replace with actual user ID retrieval logic
+    return "exampleUserId"; 
   }
 
   @override
   Widget build(BuildContext context) {
     final imageController = Provider.of<ImageController>(context);
-    final userId = getUserId(); // Get the user ID
+    final userId = getUserId(); 
 
     return Scaffold(
       appBar: AppBar(

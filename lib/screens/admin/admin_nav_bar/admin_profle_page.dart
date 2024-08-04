@@ -29,8 +29,8 @@ class AdminProfilePage extends StatelessWidget {
             return Column(
               children: [
                 Container(
-                  color: Colors.blue, // Background color for the top section
-                  width: double.infinity, // Make it stretch to the edges
+                  color: Colors.blue, 
+                  width: double.infinity, 
                   padding: EdgeInsets.symmetric(vertical: 20.h),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -48,7 +48,7 @@ class AdminProfilePage extends StatelessWidget {
                         userData['username'] ?? 'No name',
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
-                          fontSize: 20.sp, // Increased font size
+                          fontSize: 20.sp, 
                           color: Colors.white,
                         ),
                       ),
@@ -57,7 +57,7 @@ class AdminProfilePage extends StatelessWidget {
                         userData['email'] ?? 'No email',
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.normal,
-                          fontSize: 16.sp, // Increased font size
+                          fontSize: 16.sp, 
                           color: Colors.white,
                         ),
                       ),
@@ -67,10 +67,10 @@ class AdminProfilePage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Card(
-                    color: Colors.white, // Set the box color to white
+                    color: Colors.white, 
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
-                      side: BorderSide(color: Colors.blue, width: 2.0), // Blue edges
+                      side: BorderSide(color: Colors.blue, width: 2.0), 
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),

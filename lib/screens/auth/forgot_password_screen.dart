@@ -28,7 +28,7 @@ class ForgotPasswordScreen extends StatelessWidget {
         elevation: 1,
       ),
       body: Container(
-        color: Colors.white,  // Set the background color to white
+        color: Colors.white,  
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -54,7 +54,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   controller: AppTextController.emailController,
                   hintText: "E-mail",
                 ),
-                SizedBox(height: 20.h),  // Reduced space between email input and reset button
+                SizedBox(height: 20.h),  
                 Consumer<LoadingController>(builder: (context, loadingController, child) {
                   return loadingController.isLoading
                       ? Center(
@@ -72,7 +72,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                               },
                               title: "Reset",
                             ),
-                            SizedBox(height: 20.h),  // Added space between reset button and bottom of the screen
+                            SizedBox(height: 20.h),  
                           ],
                         );
                 }),

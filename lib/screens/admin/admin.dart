@@ -47,7 +47,7 @@ class _AdminPageState extends State<AdminPage> with SingleTickerProviderStateMix
     setState(() {
       _currentIndex = index;
     });
-    _controller.forward(from: 0.0); // Reset and start the animation from the beginning
+    _controller.forward(from: 0.0); 
   }
 
   void _logout() async {

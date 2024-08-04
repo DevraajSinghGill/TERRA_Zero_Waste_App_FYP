@@ -9,7 +9,7 @@ class CompletedTasksPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.white, // Set background color to white
+        color: Colors.white, 
         child: Consumer<TaskProvider>(
           builder: (context, taskProvider, child) {
             final tasks = taskProvider.completedTasks;
@@ -23,7 +23,7 @@ class CompletedTasksPage extends StatelessWidget {
                       children: [
                         Image.network(
                           'https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/completed_task.gif?alt=media&token=d0a7b8bf-52b9-4dc1-b40f-1a1d6cf6e245',
-                          height: 150, // Adjusted the height to make it bigger
+                          height: 150, 
                         ),
                         SizedBox(height: 16.0),
                         Text(
@@ -44,8 +44,8 @@ class CompletedTasksPage extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: Container(
-                          padding: const EdgeInsets.all(25.0), // Increased padding inside the container
-                          constraints: BoxConstraints(minHeight: 180), // Increased the minimum height for the container
+                          padding: const EdgeInsets.all(25.0), 
+                          constraints: BoxConstraints(minHeight: 180), 
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: NetworkImage('https://firebasestorage.googleapis.com/v0/b/terra-zero-waste-app-a10c9.appspot.com/o/teamwork.jpg?alt=media&token=5a41f53d-ed06-4fc1-b9e8-0c1f990dc593'),
